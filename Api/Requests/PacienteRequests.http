@@ -1,0 +1,19 @@
+@host = https://localhost:5001/v1/paciente
+###
+GET {{host}}
+###
+POST {{host}}
+Content-Type: application/json
+
+{
+    "Nome": "Murilo"
+}
+###
+PUT {{host}}
+Content-Type: application/json
+
+{
+    "Id": 1,
+    "Nome": "Thiago"
+}
+###
