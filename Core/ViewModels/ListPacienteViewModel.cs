@@ -1,4 +1,4 @@
-namespace Consultorio.Core.ViewModels
+namespace Core.ViewModels
 {
     public class ListPacienteViewModel
     {

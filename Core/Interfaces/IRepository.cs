@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Consultorio.Core.Models;
+using Core.Models;
+using Core.ViewModels;
 
 namespace Core.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Core.Interfaces
     {
         Paciente GetPaciente(int Id);
         IEnumerable<Paciente> GetPacientes();
+        ResultViewModel NewPaciente(Paciente paciente);
+        ResultViewModel UpdatePaciente(Paciente paciente);
     }
 }

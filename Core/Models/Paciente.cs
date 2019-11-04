@@ -1,4 +1,4 @@
-namespace Consultorio.Core.Models
+namespace Core.Models
 {
     public class Paciente
     {

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using Consultorio.Core.ViewModels;
+using Core.ViewModels;
 using Core.Interfaces;
-using Consultorio.Core.Models;
+using Core.Models;
 
-namespace Consultorio.Core.Services
+
+namespace Core.Services
 {
     public class PacienteService
     {
@@ -21,8 +22,25 @@ namespace Consultorio.Core.Services
         }
         public Paciente GetPaciente(int id)
         {
-
             return repository.GetPaciente(id);
+        }
+        public ResultViewModel NewPaciente(Paciente paciente)
+        {
+            if (paciente.Nome == "")
+            {
+                return new ResultViewModel
+                {
+                    Success = false,
+                    Message = "Nome inválido",
+                    Data = paciente
+                };
+            }
+
+            return repository.NewPaciente(paciente);
+        }
+        public ResultViewModel UpdatePaciente(Paciente paciente)
+        {
+            return repository.UpdatePaciente(paciente);
         }
     }
 }

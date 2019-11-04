@@ -1,21 +1,21 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Consultorio.Core.Services;
-using Consultorio.Core.ViewModels;
-using Consultorio.Core.Models;
+using Core.Services;
+using Core.ViewModels;
+using Core.Models;
 
-namespace ConsultorioDotnet.Controllers
+namespace Api.Controllers
 {    
     [ApiController]
     [Route("v1/paciente")]
     public class PacienteController : ControllerBase
     {
 
-        private readonly PacienteService _service;
+        private readonly PacienteService service;
 
         public PacienteController(PacienteService service)
         {
-            _service = service;
+            this.service = service;
         }
 
 
@@ -23,7 +23,8 @@ namespace ConsultorioDotnet.Controllers
         [HttpGet]        
         public Paciente GetPaciente(int id)
         {
-            var paciente = _service.GetPaciente(id);
+            var paciente = service.GetPaciente(id);
+
             return paciente;
         }
 
@@ -31,10 +32,24 @@ namespace ConsultorioDotnet.Controllers
         [HttpGet]
         public IEnumerable<Paciente> GetPacientes()
         {
-            var pacientes = _service.GetPacientes();
+            var pacientes = service.GetPacientes();
             return pacientes;
         }
+        [Route("")]
+        [HttpPost]
+        public ResultViewModel NewPaciente([FromBody] Paciente paciente)
+        {           
 
+            return service.NewPaciente(paciente);
 
+        }
+        [Route("")]
+        [HttpPut]
+        public ResultViewModel UpdatePaciente([FromBody] Paciente paciente)
+        {
+
+            return service.UpdatePaciente(paciente);
+
+        }
     }
 }

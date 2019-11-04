@@ -10,9 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Consultorio.Core.Services;
+using Core.Services;
 using Core.Interfaces;
-using Consultorio.Repositorio.Data;
+using Repositorio.Data;
 
 namespace Api
 {

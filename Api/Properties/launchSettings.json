@@ -11,8 +11,8 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchBrowser": false,
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ConnectionStrings:ConsultorioDB": "User ID=postgres;Password='mypass';Host=localhost;Port=5432;Database=ConsultorioDB;Pooling=true;"
