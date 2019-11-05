@@ -6,7 +6,7 @@ using Core.ViewModels;
 
 namespace Core.Interfaces
 {
-    public interface IRepository
+    public interface IRepositoryPaciente
     {
         Paciente GetPaciente(int Id);
         IEnumerable<Paciente> GetPacientes();

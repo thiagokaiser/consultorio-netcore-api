@@ -31,7 +31,9 @@ namespace Api
             var connectionString = Configuration.GetSection("ConnectionStrings:ConsultorioDB").Get<string>();
 
             services.AddScoped<PacienteService>();
-            services.AddScoped<IRepository>(x => new PacienteData(connectionString));
+            services.AddScoped<ConsultaService>();
+            services.AddScoped<IRepositoryPaciente>(x => new PacienteData(connectionString));
+            services.AddScoped<IRepositoryConsulta>(x => new ConsultaData(connectionString));
             services.AddControllers();
         }
 

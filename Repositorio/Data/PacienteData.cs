@@ -10,7 +10,7 @@ using Core.ViewModels;
 
 namespace Repositorio.Data
 {
-    public class PacienteData : IRepository
+    public class PacienteData : IRepositoryPaciente
     {
         private string connectionString;
 
@@ -59,14 +59,13 @@ namespace Repositorio.Data
                     {
                         Success = false,
                         Message = "Erro",
-                        Data = ex
+                        Data = ex.ToString()
                     };
                 }
             }
         }
         public ResultViewModel UpdatePaciente(Paciente paciente)
-        {
-            
+        {            
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
                 try
@@ -89,8 +88,7 @@ namespace Repositorio.Data
                         Success = false,
                         Message = "Erro",
                         Data = ex.ToString()
-                    };
-                    
+                    };                    
                 }
             }            
         }

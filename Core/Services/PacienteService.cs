@@ -8,16 +8,16 @@ namespace Core.Services
 {
     public class PacienteService
     {
-        private IRepository repository;
+        private IRepositoryPaciente repository;
 
-        public PacienteService(IRepository repository) 
+        public PacienteService(IRepositoryPaciente repository)
         {
             this.repository = repository;
         }
         public IEnumerable<Paciente> GetPacientes()
         {
             var pacientes = repository.GetPacientes();
-            return pacientes;           
+            return pacientes;
 
         }
         public Paciente GetPaciente(int id)

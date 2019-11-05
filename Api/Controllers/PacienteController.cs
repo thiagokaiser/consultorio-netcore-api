@@ -5,7 +5,7 @@ using Core.ViewModels;
 using Core.Models;
 
 namespace Api.Controllers
-{    
+{
     [ApiController]
     [Route("v1/paciente")]
     public class PacienteController : ControllerBase
@@ -18,9 +18,8 @@ namespace Api.Controllers
             this.service = service;
         }
 
-
         [Route("{id:int}")]
-        [HttpGet]        
+        [HttpGet]
         public Paciente GetPaciente(int id)
         {
             var paciente = service.GetPaciente(id);
@@ -38,7 +37,7 @@ namespace Api.Controllers
         [Route("")]
         [HttpPost]
         public ResultViewModel NewPaciente([FromBody] Paciente paciente)
-        {           
+        {
 
             return service.NewPaciente(paciente);
 
