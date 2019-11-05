@@ -25,7 +25,39 @@ namespace Core.Services
 
         public ResultViewModel NewConsulta(Consulta consulta)
         {
+            List<ErroViewModel> erros = ValidaCampos(consulta);
+
+            if (erros.Count > 0)
+            {
+                return new ResultViewModel
+                {
+                    Success = false,
+                    Message = "Ocorreram erros.",
+                    Data = erros
+                };                    
+            }
+            return repository.NewConsulta(consulta);
+        }
+        public ResultViewModel UpdateConsulta(Consulta consulta)
+        {
+            List<ErroViewModel> erros = ValidaCampos(consulta);
+            
+            if (erros.Count > 0)
+            {
+                return new ResultViewModel
+                {
+                    Success = false,
+                    Message = "Ocorreram erros.",
+                    Data = erros
+                };
+            }
+            return repository.UpdateConsulta(consulta);
+        }
+
+        public List<ErroViewModel> ValidaCampos(Consulta consulta)
+        {
             List<ErroViewModel> erros = new List<ErroViewModel>();
+
             if (consulta.Cid == "")
             {
                 erros.Add(new ErroViewModel
@@ -36,7 +68,7 @@ namespace Core.Services
                 });
 
             }
-            if(consulta.PacienteId == 0)
+            if (consulta.PacienteId == 0)
             {
                 erros.Add(new ErroViewModel
                 {
@@ -45,17 +77,7 @@ namespace Core.Services
                     Solucao = "Favor informar um paciente válido"
                 });
             }
-
-            if(erros.Count > 0)
-            {
-                return new ResultViewModel
-                {
-                    Success = false,
-                    Message = "Ocorreram erros.",
-                    Data = erros
-                };                    
-            }
-            return repository.NewConsulta(consulta);
+            return erros;
         }
 
     }

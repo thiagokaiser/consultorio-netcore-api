@@ -1,7 +1,10 @@
-@host = https://localhost:5001/v1/paciente
+@host = https://localhost:44320/v1/paciente
 ###
 GET {{host}}
 ###
+GET {{host}}/5
+###
+
 POST {{host}}
 Content-Type: application/json
 
@@ -17,3 +20,4 @@ Content-Type: application/json
     "Nome": "Thiago"
 }
 ###
+

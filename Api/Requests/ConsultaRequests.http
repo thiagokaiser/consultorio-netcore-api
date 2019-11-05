@@ -1,0 +1,26 @@
+@host = https://localhost:44320/v1/consulta
+###
+
+GET {{host}}
+###
+
+GET {{host}}/2
+###
+POST {{host}}
+Content-Type: application/json
+
+{
+    "PacienteId": 33,
+    "Conduta": "conduta3",
+    "Diagnostico": "diagnostico3",
+    "Cid": "123"
+}
+###
+PUT {{host}}
+Content-Type: application/json
+
+{
+    "Id": 9,
+    "Nome": "Olga Francis"
+}
+###

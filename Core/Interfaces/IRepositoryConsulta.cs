@@ -11,6 +11,7 @@ namespace Core.Interfaces
         Consulta GetConsulta(int id);
         IEnumerable<Consulta> GetConsultas();
         ResultViewModel NewConsulta(Consulta consulta);
+        ResultViewModel UpdateConsulta(Consulta consulta);
 
     }
 }

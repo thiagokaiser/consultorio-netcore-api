@@ -39,6 +39,12 @@ namespace Api.Controllers
             return service.NewConsulta(consulta);
         }
 
-        
+        [HttpPut]
+        public ResultViewModel UpdateConsulta([FromBody] Consulta consulta)
+        {
+            return service.UpdateConsulta(consulta);
+        }
+
+
     }
 }
