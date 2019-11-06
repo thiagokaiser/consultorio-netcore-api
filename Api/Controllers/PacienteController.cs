@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Core.Services;
 using Core.ViewModels;
 using Core.Models;
+using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
@@ -20,34 +21,34 @@ namespace Api.Controllers
 
         [Route("{id:int}")]
         [HttpGet]
-        public Paciente GetPaciente(int id)
+        public async Task<Paciente> GetPacienteAsync(int id)
         {
-            var paciente = service.GetPaciente(id);
+            var paciente = await service.GetPacienteAsync(id);
 
             return paciente;
         }
 
         [Route("")]
         [HttpGet]
-        public IEnumerable<Paciente> GetPacientes()
+        public async Task<IEnumerable<Paciente>> GetPacientesAsync()
         {
-            var pacientes = service.GetPacientes();
+            var pacientes = await service.GetPacientesAsync();
             return pacientes;
         }
         [Route("")]
         [HttpPost]
-        public ResultViewModel NewPaciente([FromBody] Paciente paciente)
+        public async Task<ResultViewModel> NewPacienteAsync([FromBody] Paciente paciente)
         {
 
-            return service.NewPaciente(paciente);
+            return await service.NewPacienteAsync(paciente);
 
         }
         [Route("")]
         [HttpPut]
-        public ResultViewModel UpdatePaciente([FromBody] Paciente paciente)
+        public async Task<ResultViewModel> UpdatePacienteAsync([FromBody] Paciente paciente)
         {
 
-            return service.UpdatePaciente(paciente);
+            return await service.UpdatePacienteAsync(paciente);
 
         }
     }

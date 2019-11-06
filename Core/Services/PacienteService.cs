@@ -2,29 +2,28 @@ using System.Collections.Generic;
 using Core.ViewModels;
 using Core.Interfaces;
 using Core.Models;
-
+using System.Threading.Tasks;
 
 namespace Core.Services
 {
     public class PacienteService
     {
         private IRepositoryPaciente repository;
-
         public PacienteService(IRepositoryPaciente repository)
         {
             this.repository = repository;
         }
-        public IEnumerable<Paciente> GetPacientes()
+        public async Task<IEnumerable<Paciente>> GetPacientesAsync()
         {
-            var pacientes = repository.GetPacientes();
+            var pacientes = await repository.GetPacientesAsync();
             return pacientes;
 
         }
-        public Paciente GetPaciente(int id)
+        public async Task<Paciente> GetPacienteAsync(int id)
         {
-            return repository.GetPaciente(id);
+            return await repository.GetPacienteAsync(id);
         }
-        public ResultViewModel NewPaciente(Paciente paciente)
+        public async Task<ResultViewModel> NewPacienteAsync(Paciente paciente)
         {
             if (paciente.Nome == "")
             {
@@ -36,11 +35,11 @@ namespace Core.Services
                 };
             }
 
-            return repository.NewPaciente(paciente);
+            return await repository.NewPacienteAsync(paciente);
         }
-        public ResultViewModel UpdatePaciente(Paciente paciente)
+        public async Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente)
         {
-            return repository.UpdatePaciente(paciente);
+            return await repository.UpdatePacienteAsync(paciente);
         }
     }
 }

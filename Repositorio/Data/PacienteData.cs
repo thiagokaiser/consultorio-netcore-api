@@ -7,6 +7,7 @@ using Core.Interfaces;
 using Dapper;
 using System;
 using Core.ViewModels;
+using System.Threading.Tasks;
 
 namespace Repositorio.Data
 {
@@ -19,33 +20,33 @@ namespace Repositorio.Data
             this.connectionString = connectionString;
         }
 
-        public Paciente GetPaciente(int id)
+        public async Task<Paciente> GetPacienteAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var paciente = conexao.QueryFirst<Paciente>(@"
+                var paciente = await conexao.QueryFirstAsync<Paciente>(@"
                     Select * from Paciente Where Id = @Id",
                     new { Id = id }
                     );
                 return paciente;
             }
         }
-        public IEnumerable<Paciente> GetPacientes()
+        public async Task<IEnumerable<Paciente>> GetPacientesAsync()
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var pacientes = conexao.Query<Paciente>("Select * from Paciente");
+                var pacientes = await conexao.QueryAsync<Paciente>("Select * from Paciente");
                 return pacientes;
             }
         }
-        public ResultViewModel NewPaciente(Paciente paciente)
+        public async Task<ResultViewModel> NewPacienteAsync(Paciente paciente)
         {            
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
                 try
                 {
                     var query = "INSERT INTO Paciente(Nome) VALUES(@Nome);"; 
-                    conexao.Execute(query, paciente);                    
+                    await conexao.ExecuteAsync(query, paciente);                    
                     return new ResultViewModel
                     {
                         Success = true,
@@ -64,7 +65,7 @@ namespace Repositorio.Data
                 }
             }
         }
-        public ResultViewModel UpdatePaciente(Paciente paciente)
+        public async Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente)
         {            
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
@@ -73,7 +74,7 @@ namespace Repositorio.Data
                     var query = @"Update Paciente Set 
                                   Nome = @Nome
                                   Where Id = @Id";
-                    conexao.Execute(query, paciente);                    
+                    await conexao.ExecuteAsync(query, paciente);                    
                     return new ResultViewModel
                     {
                         Success = true,

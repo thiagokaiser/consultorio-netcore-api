@@ -6,6 +6,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Repositorio.Data
 {
@@ -16,11 +17,11 @@ namespace Repositorio.Data
         {
             this.connectionString = connectionString;
         }
-        public Consulta GetConsulta(int id)
+        public async Task<Consulta> GetConsultaAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var consulta = conexao.QueryFirst<Consulta>(@"
+                var consulta = await conexao.QueryFirstAsync<Consulta>(@"
                     Select * from consulta Where Id = @Id",
                     new { Id = id }
                     );
@@ -28,19 +29,19 @@ namespace Repositorio.Data
             }
 
         }
-        public IEnumerable<Consulta> GetConsultas()
+        public async Task<IEnumerable<Consulta>> GetConsultasAsync()
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var consultas = conexao.Query<Consulta>("Select * from consulta");
+                var consultas = await conexao.QueryAsync<Consulta>("Select * from consulta");
                 return consultas;
             }
         }
-        public ResultViewModel NewConsulta(Consulta consulta)
+        public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<ErroViewModel> erros = ValidaConsulta(conexao, consulta);                
+                List<ErroViewModel> erros = await ValidaConsultaAsync(conexao, consulta);                
 
                 if (erros.Count > 0)
                 {
@@ -55,7 +56,7 @@ namespace Repositorio.Data
                 {
                     var query = @"Insert into Consulta(pacienteid, conduta, diagnostico, cid) 
                                           VALUES (@PacienteId,@Conduta,@Diagnostico,@Cid)";
-                    conexao.Execute(query, consulta);
+                    await conexao.ExecuteAsync(query, consulta);
                     return new ResultViewModel
                     {
                         Success = true,
@@ -76,13 +77,13 @@ namespace Repositorio.Data
             }
 
         }
-        public ResultViewModel UpdateConsulta(Consulta consulta)
+        public async Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<ErroViewModel> erros = ValidaConsulta(conexao, consulta);
+                List<ErroViewModel> erros = await ValidaConsultaAsync(conexao, consulta);
 
-                var validConsulta = conexao.QueryFirstOrDefault<Consulta>("Select id from Consulta where id = @id", new { id = consulta.Id });
+                var validConsulta = await conexao.QueryFirstOrDefaultAsync<Consulta>("Select id from Consulta where id = @id", new { id = consulta.Id });
                 if (validConsulta == null)
                 {
                     erros.Add(new ErroViewModel
@@ -111,7 +112,7 @@ namespace Repositorio.Data
                                      cid         = @Cid
                                   WHERE Id = @Id";
 
-                    conexao.Execute(query, consulta);
+                    await conexao.ExecuteAsync(query, consulta);
                     return new ResultViewModel
                     {
                         Success = true,
@@ -133,11 +134,11 @@ namespace Repositorio.Data
 
         }
 
-        public List<ErroViewModel> ValidaConsulta(NpgsqlConnection conexao, Consulta consulta)
+        private async Task<List<ErroViewModel>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
         {
             List<ErroViewModel> erros = new List<ErroViewModel> { };
 
-            var paciente = conexao.QueryFirstOrDefault<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
+            var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
             if (paciente == null)
             {
                 erros.Add(new ErroViewModel

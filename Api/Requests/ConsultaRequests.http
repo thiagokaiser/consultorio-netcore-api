@@ -10,17 +10,20 @@ POST {{host}}
 Content-Type: application/json
 
 {
-    "PacienteId": 33,
+    "PacienteId": 3,
     "Conduta": "conduta3",
     "Diagnostico": "diagnostico3",
-    "Cid": "123"
+    "Cid": "123123"
 }
 ###
 PUT {{host}}
 Content-Type: application/json
 
 {
-    "Id": 9,
-    "Nome": "Olga Francis"
+    "Id": 5,
+    "PacienteId": 3,
+    "Conduta": "condu8",
+    "Diagnostico": "diag8",
+    "Cid": "123"
 }
 ###

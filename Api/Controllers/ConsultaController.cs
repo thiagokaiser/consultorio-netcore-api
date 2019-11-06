@@ -22,27 +22,27 @@ namespace Api.Controllers
 
         [Route("{id:int}")]
         [HttpGet]
-        public Consulta GetConsulta(int id)
+        public async Task<Consulta> GetConsultaAsync(int id)
         {
-            return service.GetConsulta(id);
+            return await service.GetConsultaAsync(id);
         }
 
         [HttpGet]
-        public IEnumerable<Consulta> GetConsultas()
+        public async Task<IEnumerable<Consulta>> GetConsultasAsync()
         {
-            return service.GetConsultas();
+            return await service.GetConsultasAsync();
         }
 
         [HttpPost]
-        public ResultViewModel NewConsulta([FromBody] Consulta consulta)
+        public async Task<ResultViewModel> NewConsultaAsync([FromBody] Consulta consulta)
         {
-            return service.NewConsulta(consulta);
+            return await service.NewConsultaAsync(consulta);
         }
 
         [HttpPut]
-        public ResultViewModel UpdateConsulta([FromBody] Consulta consulta)
+        public async Task<ResultViewModel> UpdateConsultaAsync([FromBody] Consulta consulta)
         {
-            return service.UpdateConsulta(consulta);
+            return await service.UpdateConsultaAsync(consulta);
         }
 
 

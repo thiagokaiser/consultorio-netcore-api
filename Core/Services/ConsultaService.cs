@@ -4,28 +4,29 @@ using Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class ConsultaService : IRepositoryConsulta
+    public class ConsultaService
     {
         private IRepositoryConsulta repository;
         public ConsultaService(IRepositoryConsulta repository)
         {
             this.repository = repository;
         }
-        public Consulta GetConsulta(int id)
+        public async Task<Consulta> GetConsultaAsync(int id)
         {
-            return repository.GetConsulta(id);
+            return await repository.GetConsultaAsync(id);
         }
-        public IEnumerable<Consulta> GetConsultas()
+        public async Task<IEnumerable<Consulta>> GetConsultasAsync()
         {
-            return repository.GetConsultas();
+            return await repository.GetConsultasAsync();
         }
 
-        public ResultViewModel NewConsulta(Consulta consulta)
+        public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
         {
-            List<ErroViewModel> erros = ValidaCampos(consulta);
+            List<ErroViewModel> erros = await Task.Run(() => ValidaCampos(consulta));
 
             if (erros.Count > 0)
             {
@@ -36,11 +37,11 @@ namespace Core.Services
                     Data = erros
                 };                    
             }
-            return repository.NewConsulta(consulta);
+            return await repository.NewConsultaAsync(consulta);
         }
-        public ResultViewModel UpdateConsulta(Consulta consulta)
+        public async Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta)
         {
-            List<ErroViewModel> erros = ValidaCampos(consulta);
+            List<ErroViewModel> erros = await Task.Run(() => ValidaCampos(consulta));
             
             if (erros.Count > 0)
             {
@@ -51,10 +52,10 @@ namespace Core.Services
                     Data = erros
                 };
             }
-            return repository.UpdateConsulta(consulta);
+            return await repository.UpdateConsultaAsync(consulta);
         }
 
-        public List<ErroViewModel> ValidaCampos(Consulta consulta)
+        private List<ErroViewModel> ValidaCampos(Consulta consulta)
         {
             List<ErroViewModel> erros = new List<ErroViewModel>();
 
@@ -79,6 +80,5 @@ namespace Core.Services
             }
             return erros;
         }
-
     }
 }
