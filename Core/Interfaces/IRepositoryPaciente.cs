@@ -13,5 +13,6 @@ namespace Core.Interfaces
         Task<IEnumerable<Paciente>> GetPacientesAsync();
         Task<ResultViewModel> NewPacienteAsync(Paciente paciente);
         Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente);
+        Task<ResultViewModel> DeletePacienteAsync(int id);
     }
 }

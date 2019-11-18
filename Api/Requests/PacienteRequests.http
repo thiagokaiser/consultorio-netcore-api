@@ -9,15 +9,19 @@ POST {{host}}
 Content-Type: application/json
 
 {
-    "Nome": "Murilo"
+    "Nome": "asdasd",
+    "Sobrenome": "",
+    "DtNascimento": "1990-09-18"
 }
 ###
-PUT {{host}}
+PUT {{host}}/1
 Content-Type: application/json
 
 {
     "Id": 1,
-    "Nome": "Thiago"
+    "Nome": "asdasd"
 }
+###
+DELETE  {{host}}/20
 ###
 

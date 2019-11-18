@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Core.Services;
 using Core.ViewModels;
 using Core.Models;
+using Core.Exceptions;
 using System.Threading.Tasks;
+using System;
 
 namespace Api.Controllers
 {
@@ -21,35 +23,78 @@ namespace Api.Controllers
 
         [Route("{id:int}")]
         [HttpGet]
-        public async Task<Paciente> GetPacienteAsync(int id)
+        public async Task<IActionResult> GetPacienteAsync(int id)
         {
-            var paciente = await service.GetPacienteAsync(id);
-
-            return paciente;
+            try
+            {
+                var paciente = await service.GetPacienteAsync(id);
+                return Ok(paciente);
+            }
+            catch (PacienteException ex)
+            {
+                return BadRequest(ex);
+            }            
         }
 
         [Route("")]
         [HttpGet]
-        public async Task<IEnumerable<Paciente>> GetPacientesAsync()
+        public async Task<IActionResult> GetPacientesAsync()
         {
-            var pacientes = await service.GetPacientesAsync();
-            return pacientes;
+            try
+            {
+                var pacientes = await service.GetPacientesAsync();
+                return Ok(pacientes);
+            }
+            catch (PacienteException ex)
+            {
+                return BadRequest(ex);                
+            }
+            
         }
         [Route("")]
         [HttpPost]
-        public async Task<ResultViewModel> NewPacienteAsync([FromBody] Paciente paciente)
+        public async Task<IActionResult> NewPacienteAsync([FromBody] Paciente paciente)
         {
-
-            return await service.NewPacienteAsync(paciente);
-
+            try
+            {
+                var retorno = await service.NewPacienteAsync(paciente);
+                return Ok(retorno);
+            }
+            catch (PacienteException ex)
+            {
+                return BadRequest(ex);
+            }
         }
-        [Route("")]
+        [Route("{id:int}")]
         [HttpPut]
-        public async Task<ResultViewModel> UpdatePacienteAsync([FromBody] Paciente paciente)
+        public async Task<IActionResult> UpdatePacienteAsync([FromBody] Paciente paciente)
         {
-
-            return await service.UpdatePacienteAsync(paciente);
-
+            try
+            {
+                var retorno = await service.UpdatePacienteAsync(paciente);
+                return Ok(retorno);
+            }
+            catch (PacienteException ex)
+            {
+                return BadRequest(ex);                
+            }
+            
         }
+        [Route("{id:int}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeletePacienteAsync(int id)
+        {
+            try
+            {
+                ResultViewModel retorno = await service.DeletePacienteAsync(id);
+                return Ok(retorno);
+            }
+            catch(PacienteException ex)
+            {
+                return BadRequest(ex);
+            }                
+            
+        }
+
     }
 }

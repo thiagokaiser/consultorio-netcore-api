@@ -3,6 +3,9 @@ using Core.ViewModels;
 using Core.Interfaces;
 using Core.Models;
 using System.Threading.Tasks;
+using System.Linq;
+using Core.Exceptions;
+using System;
 
 namespace Core.Services
 {
@@ -25,14 +28,19 @@ namespace Core.Services
         }
         public async Task<ResultViewModel> NewPacienteAsync(Paciente paciente)
         {
-            if (paciente.Nome == "")
+            var erros = new List<string>();
+            if (string.IsNullOrEmpty(paciente.Nome))
             {
-                return new ResultViewModel
-                {
-                    Success = false,
-                    Message = "Nome inválido",
-                    Data = paciente
-                };
+                erros.Add("Nome invalido");                
+            }
+            /*if (string.IsNullOrEmpty(paciente.Sobrenome))
+            {
+                erros.Add("Sobrenome invalido");
+
+            }*/
+            if (erros.Any())
+            {
+                throw new PacienteException("Ocorreram erros ao adicionar Paciente.", erros);
             }
 
             return await repository.NewPacienteAsync(paciente);
@@ -40,6 +48,10 @@ namespace Core.Services
         public async Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente)
         {
             return await repository.UpdatePacienteAsync(paciente);
+        }
+        public async Task<ResultViewModel> DeletePacienteAsync(int id)
+        {
+            return await repository.DeletePacienteAsync(id);
         }
     }
 }

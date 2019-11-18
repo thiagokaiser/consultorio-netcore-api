@@ -11,8 +11,9 @@ namespace Core.Interfaces
     {
         Task<Consulta> GetConsultaAsync(int id);
         Task<IEnumerable<Consulta>> GetConsultasAsync();
+        Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id);
         Task<ResultViewModel> NewConsultaAsync(Consulta consulta);
         Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta);
-
+        Task DeleteConsultaAsync(int id);
     }
 }

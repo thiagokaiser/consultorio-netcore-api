@@ -1,4 +1,5 @@
-﻿using Core.Interfaces;
+﻿using Core.Exceptions;
+using Core.Interfaces;
 using Core.Models;
 using Core.ViewModels;
 using Dapper;
@@ -37,25 +38,31 @@ namespace Repositorio.Data
                 return consultas;
             }
         }
+        public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
+        {
+            using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
+            {
+                var consultas = await conexao.QueryAsync<Consulta>(@"
+                                SELECT * FROM consulta
+                                WHERE pacienteid = @Id
+                                ", new { Id = id });
+                return consultas;
+            }
+        }
         public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<ErroViewModel> erros = await ValidaConsultaAsync(conexao, consulta);                
+                List<string> erros = await ValidaConsultaAsync(conexao, consulta);                
 
                 if (erros.Count > 0)
                 {
-                    return new ResultViewModel
-                    {
-                        Success = false,
-                        Message = "Ocorreram erros.",
-                        Data = erros
-                    };
+                    throw new ConsultaException("Erro", erros);
                 }
                 try
                 {
-                    var query = @"Insert into Consulta(pacienteid, conduta, diagnostico, cid) 
-                                          VALUES (@PacienteId,@Conduta,@Diagnostico,@Cid)";
+                    var query = @"Insert into Consulta(pacienteid, conduta, diagnostico, cid, dtconsulta, exames, retorno) 
+                                          VALUES (@PacienteId,@Conduta,@Diagnostico,@Cid,@DtConsulta,@Exames,@Retorno)";
                     await conexao.ExecuteAsync(query, consulta);
                     return new ResultViewModel
                     {
@@ -66,12 +73,7 @@ namespace Repositorio.Data
                 }
                 catch (Exception ex)
                 {
-                    return new ResultViewModel
-                    {
-                        Success = false,
-                        Message = "Erro",
-                        Data = ex.ToString()
-                    };
+                    throw new ConsultaException("Erro", new List<string> { ex.Message });
                 }
                 
             }
@@ -81,27 +83,16 @@ namespace Repositorio.Data
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<ErroViewModel> erros = await ValidaConsultaAsync(conexao, consulta);
-
+                List<string> erros = await ValidaConsultaAsync(conexao, consulta);
+                
                 var validConsulta = await conexao.QueryFirstOrDefaultAsync<Consulta>("Select id from Consulta where id = @id", new { id = consulta.Id });
                 if (validConsulta == null)
                 {
-                    erros.Add(new ErroViewModel
-                    {
-                        Campo = "Id",
-                        Erro = "Consulta não cadastrada no sistema",
-                        Solucao = "Favor informar uma consulta válida"
-                    });
+                    erros.Add("Consulta não cadastrada no sistema");
                 }
-
                 if (erros.Count > 0)
                 {
-                    return new ResultViewModel
-                    {
-                        Success = false,
-                        Message = "Ocorreram erros.",
-                        Data = erros
-                    };
+                    throw new ConsultaException("Erro", erros);
                 }
                 try
                 {
@@ -109,7 +100,10 @@ namespace Repositorio.Data
                                      pacienteid  = @PacienteId,
                                      conduta     = @Conduta,
                                      diagnostico = @Diagnostico,
-                                     cid         = @Cid
+                                     cid         = @Cid,
+                                     dtConsulta  = @DtConsulta,
+                                     exames      = @Exames,
+                                     retorno     = @Retorno
                                   WHERE Id = @Id";
 
                     await conexao.ExecuteAsync(query, consulta);
@@ -121,36 +115,53 @@ namespace Repositorio.Data
                     };
                 }
                 catch (Exception ex)
-                {
-                    return new ResultViewModel
-                    {
-                        Success = false,
-                        Message = "Erro",
-                        Data = ex.ToString()
-                    };
+                {                    
+                    throw new ConsultaException("Erro", new List<string> { ex.Message });                
                 }
 
             }
 
         }
 
-        private async Task<List<ErroViewModel>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
+        private async Task<List<string>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
         {
-            List<ErroViewModel> erros = new List<ErroViewModel> { };
+            List<string> erros = new List<string> { };
 
             var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
             if (paciente == null)
             {
-                erros.Add(new ErroViewModel
-                {
-                    Campo = "PacienteId",
-                    Erro = "Paciente não cadastrado no sistema",
-                    Solucao = "Favor informar um paciente válido"
-                });
+                erros.Add("Paciente não cadastrado no sistema");
             }
 
             return erros;
 
+        }
+
+        public async Task DeleteConsultaAsync(int id)
+        {            
+            using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))         
+            {
+                List<string> erros = new List<string>();
+                if (this.GetConsultaAsync(id) == null)
+                {
+                    erros.Add("Consulta não existe");                       
+                }
+                if (erros.Count > 0)
+                {
+                    throw new ConsultaException("erro ao deletar", erros);
+                }
+                try
+                {
+                    var query = "DELETE FROM Consulta Where id = @Id";
+                    await conexao.ExecuteAsync(query, new { Id = id });
+
+                }
+                catch (Exception ex)
+                {
+                    throw new ConsultaException("Erro", new List<string> { ex.Message });
+                }
+
+            }
         }
     }
 }
