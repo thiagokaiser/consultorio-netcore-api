@@ -1,0 +1,22 @@
+@host = https://localhost:44320/auth
+
+###
+POST {{host}}/newacc
+Content-Type: application/json
+
+{
+    "email": "aa@a.com",
+    "password": "Asd@123",
+    "confirmPassword": "Asd@123",
+}
+###
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "email": "a@a.com",
+    "password": "Asd@123"
+}
+###
+
+GET {{host}}/logout

@@ -6,6 +6,7 @@ using Dapper;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,22 +31,76 @@ namespace Repositorio.Data
             }
 
         }
-        public async Task<IEnumerable<Consulta>> GetConsultasAsync()
+        public async Task<ListConsultaViewModel> GetConsultasAsync(Pager pager)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var consultas = await conexao.QueryAsync<Consulta>("Select * from consulta");
-                return consultas;
+                string safeOrderBy;
+                switch (pager.OrderBy)
+                {
+                    case "dtconsulta ASC":
+                        safeOrderBy = "consulta.dtconsulta ASC";
+                        break;
+                    case "dtconsulta DESC":
+                        safeOrderBy = "consulta.dtconsulta DESC";
+                        break;
+                    case "nome ASC":
+                        safeOrderBy = "paciente.nome ASC";
+                        break;
+                    case "nome DESC":
+                        safeOrderBy = "paciente.nome DESC";
+                        break;
+                    case "id ASC":
+                        safeOrderBy = "consulta.id ASC";
+                        break;
+                    case "id DESC":
+                        safeOrderBy = "consulta.id DESC";
+                        break;
+                    default:
+                        safeOrderBy = "consulta.id ASC";
+                        break;
+                }
+
+                string where = @"WHERE conduta LIKE @SearchText
+                                 OR diagnostico LIKE @SearchText
+                                 OR exames LIKE @SearchText
+                                 OR retorno LIKE @SearchText
+                                 OR paciente.nome LIKE @SearchText";
+
+                string sqlcount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";
+                var consultascount = await conexao.QueryAsync<int>(sqlcount, pager);
+
+                string sql = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +                             
+                             $"{where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
+                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(sql,
+                                                                                       (consulta, paciente) =>
+                                                                                       {
+                                                                                           consulta.Paciente = paciente;
+                                                                                           return consulta;
+                                                                                       },                                                                                       
+                                                                                       splitOn:"id",
+                                                                                       param: pager                                                                                       
+                                                                                      );
+                
+                return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
             }
         }
         public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var consultas = await conexao.QueryAsync<Consulta>(@"
+                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(@"
                                 SELECT * FROM consulta
-                                WHERE pacienteid = @Id
-                                ", new { Id = id });
+                                INNER JOIN paciente ON paciente.id = consulta.pacienteid
+                                WHERE consulta.pacienteid = @Id",
+                                (consulta, paciente) =>
+                                {
+                                    consulta.Paciente = paciente;
+                                    return consulta;
+                                },
+                                splitOn: "Id",
+                                param: new { Id = id });
+
                 return consultas;
             }
         }

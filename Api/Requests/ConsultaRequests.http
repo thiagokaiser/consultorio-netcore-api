@@ -3,14 +3,26 @@
 
 GET {{host}}
 ###
+GET  {{host}}/all?page=1&pagesize=20&orderby=nome ASC&searchtext=c1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb25zdWx0YSI6ImFkZCxlZGl0LGRlbCIsIm5iZiI6MTU3NTQ2NDM4MiwiZXhwIjoxNTc1NDcxNTgyLCJpYXQiOjE1NzU0NjQzODIsImlzcyI6Ik1ldVNpc3RlbWEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdCJ9.keap8K6QTSJT2uowcHmwUShvrXfY_zEWWV2jKhCW6Fk
 
+Content-Type: application/json
+
+{
+    "page": 1,
+    "pagesize": 10
+}
+###
 GET {{host}}/2
+###
+
+GET {{host}}/paciente/69
 ###
 POST {{host}}
 Content-Type: application/json
 
 {
-    "PacienteId": 3,
+    "PacienteId": 70,
     "Conduta": "conduta3",
     "Diagnostico": "diagnostico3",
     "Cid": "123123"

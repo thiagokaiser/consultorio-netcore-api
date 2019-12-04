@@ -10,7 +10,7 @@ namespace Core.Interfaces
     public interface IRepositoryConsulta
     {
         Task<Consulta> GetConsultaAsync(int id);
-        Task<IEnumerable<Consulta>> GetConsultasAsync();
+        Task<ListConsultaViewModel> GetConsultasAsync(Pager pager);
         Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id);
         Task<ResultViewModel> NewConsultaAsync(Consulta consulta);
         Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta);

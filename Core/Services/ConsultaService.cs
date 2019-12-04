@@ -20,9 +20,9 @@ namespace Core.Services
         {
             return await repository.GetConsultaAsync(id);
         }
-        public async Task<IEnumerable<Consulta>> GetConsultasAsync()
+        public async Task<ListConsultaViewModel> GetConsultasAsync(Pager pager)
         {
-            return await repository.GetConsultasAsync();
+            return await repository.GetConsultasAsync(pager);
         }
         public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
         {
