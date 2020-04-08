@@ -22,7 +22,7 @@ POST {{host}}
 Content-Type: application/json
 
 {
-    "PacienteId": 70,
+    "PacienteId": 88,
     "Conduta": "conduta3",
     "Diagnostico": "diagnostico3",
     "Cid": "123123"

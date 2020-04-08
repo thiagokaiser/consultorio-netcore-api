@@ -1,4 +1,4 @@
-@host = https://localhost:44320/auth
+@host = https://localhost:44320/v1/security
 
 ###
 POST {{host}}/newacc

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("v1/consulta")]
     public class ConsultaController : ControllerBase
@@ -44,7 +44,7 @@ namespace Api.Controllers
             return await service.GetConsultasPacienteAsync(id);
         }
 
-        [ClaimsAuthorize("consulta","add")]
+        //[ClaimsAuthorize("consulta","add")]
         [HttpPost]
         public async Task<IActionResult> NewConsultaAsync([FromBody] Consulta consulta)
         {
@@ -59,7 +59,7 @@ namespace Api.Controllers
             
         }
 
-        [ClaimsAuthorize("consulta", "edit")]
+        //[ClaimsAuthorize("consulta", "edit")]
         [Route("{id:int}")]
         [HttpPut]
         public async Task<IActionResult> UpdateConsultaAsync([FromBody] Consulta consulta)
@@ -75,7 +75,7 @@ namespace Api.Controllers
             }            
         }
 
-        [ClaimsAuthorize("consulta", "del")]
+        //[ClaimsAuthorize("consulta", "del")]
         [Route("{id:int}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteConsultaAsync(int id)

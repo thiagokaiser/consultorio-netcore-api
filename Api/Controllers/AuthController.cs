@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    [Route("auth")]
+    [Route("v1/security")]
     public class AuthController : ControllerBase
     {
         private readonly SignInManager<IdentityUser> signInManager;
@@ -55,9 +55,10 @@ namespace Api.Controllers
             var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
             if (result.Succeeded)
             {
-                return Ok(await GerarJwt(loginUser.Email));
+                var token = await GerarJwt(loginUser.Email);
+                return Ok(new LoginViewModel { Email = loginUser.Email, Token = token });
             }
-            return BadRequest("usuario e senha invalidos");
+            return BadRequest(new Exception("Usuário e senha inválidos"));
         }
 
         [HttpGet("logout")]
