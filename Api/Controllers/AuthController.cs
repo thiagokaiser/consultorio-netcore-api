@@ -1,4 +1,5 @@
-﻿using Core.ViewModels;
+﻿using Api.Models.Identity;
+using Core.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -16,12 +17,12 @@ namespace Api.Controllers
     [Route("v1/security")]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser> signInManager;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
         private readonly AppSettings appSettings;
 
-        public AuthController(SignInManager<IdentityUser> signInManager,
-                              UserManager<IdentityUser> userManager,
+        public AuthController(SignInManager<User> signInManager,
+                              UserManager<User> userManager,
                               IOptions<AppSettings> appSettings)
         {
             this.signInManager = signInManager;
@@ -34,7 +35,7 @@ namespace Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
-            var user = new IdentityUser
+            var user = new User
             {
                 UserName = registeruser.Email,
                 Email = registeruser.Email,
@@ -56,7 +57,7 @@ namespace Api.Controllers
             if (result.Succeeded)
             {
                 var token = await GerarJwt(loginUser.Email);
-                return Ok(new LoginViewModel { Email = loginUser.Email, Token = token });
+                return Ok(new LoginViewModel { Email = loginUser.Email, accessToken = token });
             }
             return BadRequest(new Exception("Usuário e senha inválidos"));
         }
@@ -74,6 +75,8 @@ namespace Api.Controllers
 
             var identityClaims = new ClaimsIdentity();
             identityClaims.AddClaims(await userManager.GetClaimsAsync(user));
+            identityClaims.AddClaim(new Claim("firstName", user.FirstName));
+            identityClaims.AddClaim(new Claim("lastName", user.LastName));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);

@@ -7,6 +7,8 @@ namespace Core.ViewModels
     public class LoginViewModel
     {
         public string Email { get; set; }
-        public string Token { get; set; }
+        public string accessToken { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

@@ -20,6 +20,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Logging;
+using Api.Models.Identity;
 
 namespace Api
 {
@@ -58,7 +59,7 @@ namespace Api
             services.AddDbContext<IdentityContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<User>()
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<IdentityContext>()
                     .AddDefaultTokenProviders();
