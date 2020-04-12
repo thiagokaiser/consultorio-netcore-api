@@ -6,9 +6,11 @@ using Core.Models;
 using Core.Exceptions;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("v1/paciente")]
     public class PacienteController : ControllerBase

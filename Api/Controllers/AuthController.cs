@@ -57,7 +57,7 @@ namespace Api.Controllers
             if (result.Succeeded)
             {
                 var token = await GerarJwt(loginUser.Email);
-                return Ok(new LoginViewModel { Email = loginUser.Email, accessToken = token });
+                return Ok(new { accessToken = token });
             }
             return BadRequest(new Exception("Usuário e senha inválidos"));
         }

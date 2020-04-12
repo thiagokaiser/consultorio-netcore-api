@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("v1/consulta")]
     public class ConsultaController : ControllerBase
