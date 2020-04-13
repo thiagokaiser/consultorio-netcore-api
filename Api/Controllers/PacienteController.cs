@@ -49,7 +49,7 @@ namespace Api.Controllers
             }
             catch (PacienteException ex)
             {
-                return BadRequest(ex);                
+                return BadRequest(ex);
             }
             
         }

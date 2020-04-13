@@ -1,5 +1,6 @@
 ﻿using Api.Models.Identity;
 using Core.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
-{
+{    
     [Route("v1/security")]
     public class AuthController : ControllerBase
     {
@@ -30,7 +31,7 @@ namespace Api.Controllers
             this.appSettings = appSettings.Value;
         }
 
-        [HttpPost("newaccount")]
+        [HttpPost("registrar")]
         public async Task<IActionResult> Registrar([FromBody] RegisterUserViewModel registeruser)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));

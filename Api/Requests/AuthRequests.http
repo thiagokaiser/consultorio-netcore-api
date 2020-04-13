@@ -1,13 +1,15 @@
 @host = https://localhost:44320/v1/security
 
 ###
-POST {{host}}/newacc
+POST {{host}}/registrar
 Content-Type: application/json
 
 {
-    "email": "aa@a.com",
+    "email": "aaa@a.com",
     "password": "Asd@123",
     "confirmPassword": "Asd@123",
+    "firstName": "thiago",
+    "lastName": "alou"
 }
 ###
 POST {{host}}/login
