@@ -63,8 +63,7 @@ namespace Repositorio.Data
 
                 string where = @"WHERE conduta LIKE @SearchText
                                  OR diagnostico LIKE @SearchText
-                                 OR exames LIKE @SearchText
-                                 OR retorno LIKE @SearchText
+                                 OR exames LIKE @SearchText                                 
                                  OR paciente.nome LIKE @SearchText";
 
                 string sqlcount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";

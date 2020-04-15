@@ -15,7 +15,7 @@ namespace Core.Models
         public string Cid { get; set; }
         public DateTime DtConsulta { get; set; }
         public string Exames { get; set; }
-        public string Retorno { get; set; }
+        public DateTime Retorno { get; set; }
 
 
 
