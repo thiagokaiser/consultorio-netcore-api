@@ -78,6 +78,7 @@ namespace Api.Controllers
             identityClaims.AddClaims(await userManager.GetClaimsAsync(user));
             identityClaims.AddClaim(new Claim("firstName", user.FirstName));
             identityClaims.AddClaim(new Claim("lastName", user.LastName));
+            identityClaims.AddClaim(new Claim("email", user.Email));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -93,6 +94,20 @@ namespace Api.Controllers
             };
 
             return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+        }
+
+        [Authorize]
+        [HttpPost("perfil")]
+        public async Task<IActionResult> LoadUserByEmail([FromBody] User user)
+        {            
+            try
+            {                
+                return Ok(await userManager.FindByEmailAsync(user.Email));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }            
         }
     }
 }
