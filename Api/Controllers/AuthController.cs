@@ -109,5 +109,26 @@ namespace Api.Controllers
                 return BadRequest(ex);
             }            
         }
+
+        [Authorize]
+        [HttpPut("perfil")]
+        public async Task<IActionResult> UpdateUser([FromBody] User userForm)
+        {
+            try
+            {
+                var user = await userManager.FindByEmailAsync(userForm.Email);
+                user.FirstName = userForm.FirstName;
+                user.LastName = userForm.LastName;
+                user.DtNascimento = userForm.DtNascimento;
+                user.Descricao = userForm.Descricao;
+                user.Cidade = userForm.Cidade;
+                user.Estado = userForm.Estado;
+                return Ok(await userManager.UpdateAsync(user));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }            
+        }
     }
 }
