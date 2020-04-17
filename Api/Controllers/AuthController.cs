@@ -98,7 +98,7 @@ namespace Api.Controllers
 
         [Authorize]
         [HttpPost("perfil")]
-        public async Task<IActionResult> LoadUserByEmail([FromBody] User user)
+        public async Task<IActionResult> LoadUserByEmail([FromBody] UserViewModel user)
         {            
             try
             {                
@@ -112,18 +112,29 @@ namespace Api.Controllers
 
         [Authorize]
         [HttpPut("perfil")]
-        public async Task<IActionResult> UpdateUser([FromBody] User userForm)
+        public async Task<IActionResult> UpdateUser([FromBody] UserViewModel userForm)
         {
-            try
+            var result = await signInManager.PasswordSignInAsync(userForm.Email, userForm.Password, false, true);
+            if (!result.Succeeded)
             {
+                return BadRequest(new Exception("Senha inválida"));                
+            }
+            try
+            {                
                 var user = await userManager.FindByEmailAsync(userForm.Email);
+
                 user.FirstName = userForm.FirstName;
                 user.LastName = userForm.LastName;
                 user.DtNascimento = userForm.DtNascimento;
                 user.Descricao = userForm.Descricao;
                 user.Cidade = userForm.Cidade;
                 user.Estado = userForm.Estado;
-                return Ok(await userManager.UpdateAsync(user));
+
+                var userUpdated = await userManager.UpdateAsync(user);
+
+                var newToken = await GerarJwt(user.Email);
+
+                return Ok(new { accessToken = newToken });
             }
             catch(Exception ex)
             {
