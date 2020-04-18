@@ -40,14 +40,18 @@ namespace Api.Controllers
             {
                 UserName = registeruser.Email,
                 Email = registeruser.Email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                FirstName = registeruser.firstName,
+                LastName = registeruser.lastName
             };
 
             var result = await userManager.CreateAsync(user, registeruser.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
             await signInManager.SignInAsync(user, false);
-            return Ok(await GerarJwt(registeruser.Email));
+
+            var token = await GerarJwt(registeruser.Email);
+            return Ok(new { accessToken = token });
 
         }
         [HttpPost("login")]
