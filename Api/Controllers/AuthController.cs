@@ -32,7 +32,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("registrar")]
-        public async Task<IActionResult> Registrar([FromBody] RegisterUserViewModel registeruser)
+        public async Task<IActionResult> NewUser([FromBody] RegisterUserViewModel registeruser)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
@@ -144,6 +144,32 @@ namespace Api.Controllers
             {
                 return BadRequest(ex);
             }            
+        }
+        [Authorize]
+        [HttpPut("senha")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassViewModel userForm)
+        {
+            if (userForm.NewPassword != userForm.ConfirmNewPassword)
+            {
+                return BadRequest(new Exception("Senhas não conferem"));
+            }
+            try
+            {
+                var user = await userManager.FindByEmailAsync(userForm.Email);
+
+                var changePass = userManager.ChangePasswordAsync(user, userForm.OldPassword, userForm.NewPassword);
+
+                if (changePass.Result.Succeeded)
+                {
+                    return Ok(changePass.Result);
+                }
+                return BadRequest(changePass.Result.Errors);
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }
