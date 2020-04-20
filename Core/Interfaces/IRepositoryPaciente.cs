@@ -10,7 +10,7 @@ namespace Core.Interfaces
     public interface IRepositoryPaciente
     {
         Task<Paciente> GetPacienteAsync(int Id);
-        Task<IEnumerable<Paciente>> GetPacientesAsync();
+        Task<ListPacienteViewModel> GetPacientesAsync(Pager pager);
         Task<ResultViewModel> NewPacienteAsync(Paciente paciente);
         Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente);
         Task<ResultViewModel> DeletePacienteAsync(int id);

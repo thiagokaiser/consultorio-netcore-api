@@ -16,9 +16,9 @@ namespace Core.Services
         {
             this.repository = repository;
         }
-        public async Task<IEnumerable<Paciente>> GetPacientesAsync()
+        public async Task<ListPacienteViewModel> GetPacientesAsync(Pager pager)
         {
-            var pacientes = await repository.GetPacientesAsync();
+            var pacientes = await repository.GetPacientesAsync(pager);
             return pacientes;
 
         }

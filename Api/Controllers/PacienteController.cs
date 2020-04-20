@@ -40,11 +40,12 @@ namespace Api.Controllers
 
         [Route("")]
         [HttpGet]
-        public async Task<IActionResult> GetPacientesAsync()
+        public async Task<IActionResult> GetPacientesAsync(int page, int pagesize, string orderby, string searchtext)
         {
             try
             {
-                var pacientes = await service.GetPacientesAsync();
+                Pager pager = new Pager(page, pagesize, orderby, searchtext);
+                var pacientes = await service.GetPacientesAsync(pager);
                 return Ok(pacientes);
             }
             catch (PacienteException ex)

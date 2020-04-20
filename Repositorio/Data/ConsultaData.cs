@@ -35,43 +35,20 @@ namespace Repositorio.Data
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                string safeOrderBy;
-                switch (pager.OrderBy)
-                {
-                    case "dtconsulta ASC":
-                        safeOrderBy = "consulta.dtconsulta ASC";
-                        break;
-                    case "dtconsulta DESC":
-                        safeOrderBy = "consulta.dtconsulta DESC";
-                        break;
-                    case "nome ASC":
-                        safeOrderBy = "paciente.nome ASC";
-                        break;
-                    case "nome DESC":
-                        safeOrderBy = "paciente.nome DESC";
-                        break;
-                    case "id ASC":
-                        safeOrderBy = "consulta.id ASC";
-                        break;
-                    case "id DESC":
-                        safeOrderBy = "consulta.id DESC";
-                        break;
-                    default:
-                        safeOrderBy = "consulta.id ASC";
-                        break;
-                }
+                string safeOrderBy = SafeOrderBy(pager.OrderBy);                
 
                 string where = @"WHERE conduta LIKE @SearchText
                                  OR diagnostico LIKE @SearchText
                                  OR exames LIKE @SearchText                                 
                                  OR paciente.nome LIKE @SearchText";
 
-                string sqlcount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";
-                var consultascount = await conexao.QueryAsync<int>(sqlcount, pager);
+                string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";
+                var consultascount = await conexao.QueryAsync<int>(queryCount, pager);
 
-                string sql = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +                             
+                string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +                             
                              $"{where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
-                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(sql,
+
+                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
                                                                                        (consulta, paciente) =>
                                                                                        {
                                                                                            consulta.Paciente = paciente;
@@ -177,28 +154,14 @@ namespace Repositorio.Data
 
         }
 
-        private async Task<List<string>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
-        {
-            List<string> erros = new List<string> { };
-
-            var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
-            if (paciente == null)
-            {
-                erros.Add("Paciente não cadastrado no sistema");
-            }
-
-            return erros;
-
-        }
-
         public async Task DeleteConsultaAsync(int id)
-        {            
-            using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))         
+        {
+            using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
                 List<string> erros = new List<string>();
                 if (this.GetConsultaAsync(id) == null)
                 {
-                    erros.Add("Consulta não existe");                       
+                    erros.Add("Consulta não existe");
                 }
                 if (erros.Count > 0)
                 {
@@ -217,5 +180,51 @@ namespace Repositorio.Data
 
             }
         }
+
+        private string SafeOrderBy(string orderby)
+        {
+            var safeOrderBy = "";
+
+            switch (orderby)
+            {
+                case "dtconsulta asc":
+                    safeOrderBy = "consulta.dtconsulta ASC";
+                    break;
+                case "dtconsulta desc":
+                    safeOrderBy = "consulta.dtconsulta DESC";
+                    break;
+                case "nome asc":
+                    safeOrderBy = "paciente.nome ASC";
+                    break;
+                case "nome desc":
+                    safeOrderBy = "paciente.nome DESC";
+                    break;
+                case "id asc":
+                    safeOrderBy = "consulta.id ASC";
+                    break;
+                case "id desc":
+                    safeOrderBy = "consulta.id DESC";
+                    break;
+                default:
+                    safeOrderBy = "consulta.id ASC";
+                    break;
+            }
+
+            return safeOrderBy;
+        }
+
+        private async Task<List<string>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
+        {
+            List<string> erros = new List<string> { };
+
+            var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
+            if (paciente == null)
+            {
+                erros.Add("Paciente não cadastrado no sistema");
+            }
+
+            return erros;
+
+        }        
     }
 }

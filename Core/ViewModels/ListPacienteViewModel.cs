@@ -1,9 +1,12 @@
+using Core.Models;
+using System.Collections.Generic;
+
 namespace Core.ViewModels
 {
     public class ListPacienteViewModel
     {
-        public int Id{get;set;}
-        public string Nome {get;set;}
-        
+        public int count { get; set; }
+        public IEnumerable<Paciente> pacientes { get; set; }
+
     }
 }

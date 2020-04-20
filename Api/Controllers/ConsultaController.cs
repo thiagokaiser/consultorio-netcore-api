@@ -32,10 +32,10 @@ namespace Api.Controllers
 
         [Route("all")]
         [HttpGet]
-        public async Task<ListConsultaViewModel> GetConsultasAsync(int page, int pagesize, string orderby, string searchtext)
+        public async Task<IActionResult> GetConsultasAsync(int page, int pagesize, string orderby, string searchtext)
         {
             Pager pager = new Pager(page,pagesize,orderby,searchtext);
-            return await service.GetConsultasAsync(pager);
+            return Ok(await service.GetConsultasAsync(pager));
         }
         [Route("paciente/{id:int}")]
         [HttpGet]
