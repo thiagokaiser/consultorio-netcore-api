@@ -39,9 +39,10 @@ namespace Api.Controllers
         }
         [Route("paciente/{id:int}")]
         [HttpGet]
-        public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
+        public async Task<IActionResult> GetConsultasPacienteAsync(int id, int page, int pagesize, string orderby, string searchtext)
         {
-            return await service.GetConsultasPacienteAsync(id);
+            Pager pager = new Pager(page, pagesize, orderby, searchtext);
+            return Ok(await service.GetConsultasPacienteAsync(id, pager));
         }
 
         [ClaimsAuthorize("consulta","add")]

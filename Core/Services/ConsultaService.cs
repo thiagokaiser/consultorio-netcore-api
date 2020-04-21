@@ -24,9 +24,9 @@ namespace Core.Services
         {
             return await repository.GetConsultasAsync(pager);
         }
-        public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
+        public async Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager)
         {
-            return await repository.GetConsultasPacienteAsync(id);
+            return await repository.GetConsultasPacienteAsync(id, pager);
         }
 
         public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)

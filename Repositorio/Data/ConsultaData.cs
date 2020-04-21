@@ -61,23 +61,45 @@ namespace Repositorio.Data
                 return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
             }
         }
-        public async Task<IEnumerable<Consulta>> GetConsultasPacienteAsync(int id)
+        public async Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(@"
-                                SELECT * FROM consulta
-                                INNER JOIN paciente ON paciente.id = consulta.pacienteid
-                                WHERE consulta.pacienteid = @Id",
-                                (consulta, paciente) =>
-                                {
-                                    consulta.Paciente = paciente;
-                                    return consulta;
-                                },
-                                splitOn: "Id",
-                                param: new { Id = id });
+                var queryParams = new { 
+                    Id = id,
+                    Page = pager.Page,
+                    PageSize = pager.PageSize,
+                    OffSet = pager.OffSet,
+                    OrderBy = pager.OrderBy,
+                    SearchText = pager.SearchText
+                };
 
-                return consultas;
+                string safeOrderBy = SafeOrderBy(pager.OrderBy);
+
+                string where = @"conduta LIKE @SearchText
+                                 OR diagnostico LIKE @SearchText
+                                 OR exames LIKE @SearchText                                 
+                                 OR paciente.nome LIKE @SearchText";
+
+                string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
+                                    $"WHERE consulta.pacienteid = @Id AND({where})";
+                var consultascount = await conexao.QueryAsync<int>(queryCount, queryParams);
+
+                string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
+                               $"WHERE consulta.pacienteid = @Id AND({where}) ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
+
+                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
+                                                                                       (consulta, paciente) =>
+                                                                                       {
+                                                                                           consulta.Paciente = paciente;
+                                                                                           return consulta;
+                                                                                       },
+                                                                                       splitOn: "id",
+                                                                                       param: queryParams
+                                                                                      );
+
+                return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
+
             }
         }
         public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
