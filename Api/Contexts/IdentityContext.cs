@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Repositorio.Data
+namespace Api.Contexts
 {
     public class IdentityContext : IdentityDbContext<User>
     {

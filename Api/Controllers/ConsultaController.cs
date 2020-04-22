@@ -25,9 +25,16 @@ namespace Api.Controllers
 
         [Route("{id:int}")]
         [HttpGet]
-        public async Task<Consulta> GetConsultaAsync(int id)
+        public async Task<IActionResult> GetConsultaAsync(int id)
         {
-            return await service.GetConsultaAsync(id);
+            try
+            {
+                return Ok(await service.GetConsultaAsync(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);                
+            }            
         }
 
         [Route("all")]

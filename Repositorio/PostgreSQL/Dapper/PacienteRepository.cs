@@ -11,13 +11,13 @@ using Core.ViewModels;
 using System.Threading.Tasks;
 using Core.Exceptions;
 
-namespace Repositorio.Data
+namespace Repositorio.PostgreSQL.Dapper
 {
-    public class PacienteData : IRepositoryPaciente
+    public class PacienteRepository : IRepositoryPaciente
     {
         private string connectionString;
 
-        public PacienteData(string connectionString)
+        public PacienteRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }

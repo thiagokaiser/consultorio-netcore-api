@@ -10,12 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositorio.Data
+namespace Repositorio.PostgreSQL.Dapper
 {
-    public class ConsultaData : IRepositoryConsulta
+    public class ConsultaRepository : IRepositoryConsulta
     {
         private string connectionString;
-        public ConsultaData(string connectionString)
+        public ConsultaRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }

@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Core.Services;
 using Core.Interfaces;
-using Repositorio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
@@ -21,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Logging;
 using Api.Models.Identity;
+using Repositorio.PostgreSQL.Dapper;
+using Api.Contexts;
 
 namespace Api
 {
@@ -52,8 +53,8 @@ namespace Api
 
             services.AddScoped<PacienteService>();
             services.AddScoped<ConsultaService>();
-            services.AddScoped<IRepositoryPaciente>(x => new PacienteData(connectionString));
-            services.AddScoped<IRepositoryConsulta>(x => new ConsultaData(connectionString));
+            services.AddScoped<IRepositoryPaciente>(x => new PacienteRepository(connectionString));
+            services.AddScoped<IRepositoryConsulta>(x => new ConsultaRepository(connectionString));
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);            
 
             services.AddDbContext<IdentityContext>(options =>
