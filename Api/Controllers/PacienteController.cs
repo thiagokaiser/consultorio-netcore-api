@@ -7,6 +7,7 @@ using Core.Exceptions;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Api.Security;
 
 namespace Api.Controllers
 {
@@ -23,6 +24,7 @@ namespace Api.Controllers
             this.service = service;
         }
 
+        [ClaimsAuthorize("paciente", "view")]
         [Route("{id:int}")]
         [HttpGet]
         public async Task<IActionResult> GetPacienteAsync(int id)
@@ -38,6 +40,7 @@ namespace Api.Controllers
             }            
         }
 
+        [ClaimsAuthorize("paciente", "view")]
         [Route("")]
         [HttpGet]
         public async Task<IActionResult> GetPacientesAsync(int page, int pagesize, string orderby, string searchtext)
@@ -54,6 +57,8 @@ namespace Api.Controllers
             }
             
         }
+
+        [ClaimsAuthorize("paciente", "add")]
         [Route("")]
         [HttpPost]
         public async Task<IActionResult> NewPacienteAsync([FromBody] Paciente paciente)
@@ -68,6 +73,8 @@ namespace Api.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [ClaimsAuthorize("paciente", "edit")]
         [Route("{id:int}")]
         [HttpPut]
         public async Task<IActionResult> UpdatePacienteAsync([FromBody] Paciente paciente)
@@ -83,6 +90,8 @@ namespace Api.Controllers
             }
             
         }
+
+        [ClaimsAuthorize("paciente", "del")]
         [Route("{id:int}")]
         [HttpDelete]
         public async Task<IActionResult> DeletePacienteAsync(int id)

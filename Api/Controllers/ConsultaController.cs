@@ -1,4 +1,5 @@
-﻿using Core.Exceptions;
+﻿using Api.Security;
+using Core.Exceptions;
 using Core.Models;
 using Core.Services;
 using Core.ViewModels;
@@ -23,6 +24,7 @@ namespace Api.Controllers
             this.service = service;
         }
 
+        [ClaimsAuthorize("consulta", "view")]
         [Route("{id:int}")]
         [HttpGet]
         public async Task<IActionResult> GetConsultaAsync(int id)
@@ -37,6 +39,7 @@ namespace Api.Controllers
             }            
         }
 
+        [ClaimsAuthorize("consulta", "view")]
         [Route("all")]
         [HttpGet]
         public async Task<IActionResult> GetConsultasAsync(int page, int pagesize, string orderby, string searchtext)

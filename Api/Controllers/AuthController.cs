@@ -1,4 +1,5 @@
 ﻿using Api.Models.Identity;
+using Api.Security;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,15 +21,15 @@ namespace Api.Controllers
     {
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
-        private readonly AppSettings appSettings;
+        private readonly JwtSettings jwtSettings;
 
         public AuthController(SignInManager<User> signInManager,
                               UserManager<User> userManager,
-                              IOptions<AppSettings> appSettings)
+                              IOptions<JwtSettings> jwtSettings)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
-            this.appSettings = appSettings.Value;
+            this.jwtSettings = jwtSettings.Value;
         }
 
         [HttpPost("registrar")]
@@ -85,14 +86,14 @@ namespace Api.Controllers
             identityClaims.AddClaim(new Claim("email", user.Email));
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = identityClaims,
-                Issuer = appSettings.Emissor,
-                Audience = appSettings.ValidoEm,
-                Expires = DateTime.UtcNow.AddHours(appSettings.ExpiracaoHoras),
+                Issuer = jwtSettings.Emissor,
+                Audience = jwtSettings.ValidoEm,
+                Expires = DateTime.UtcNow.AddHours(jwtSettings.ExpiracaoHoras),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), 
                     SecurityAlgorithms.HmacSha256Signature)
             };

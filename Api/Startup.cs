@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Logging;
 using Api.Models.Identity;
 using Repositorio.PostgreSQL.Dapper;
 using Api.Contexts;
+using Api.Security;
 
 namespace Api
 {
@@ -66,11 +67,11 @@ namespace Api
                     .AddDefaultTokenProviders();
 
             //JWT
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
+            var jwtSettingsSection = Configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSettingsSection);
 
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
 
 
             services.AddAuthentication(x =>
@@ -87,8 +88,8 @@ namespace Api
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = appSettings.ValidoEm,
-                    ValidIssuer = appSettings.Emissor
+                    ValidAudience = jwtSettings.ValidoEm,
+                    ValidIssuer = jwtSettings.Emissor
                 };
             });
 

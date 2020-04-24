@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Api
+namespace Api.Security
 {
     public class CustomAuthorization
     {
