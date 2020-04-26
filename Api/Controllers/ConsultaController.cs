@@ -33,7 +33,7 @@ namespace Api.Controllers
             {
                 return Ok(await service.GetConsultaAsync(id));
             }
-            catch (Exception ex)
+            catch (ConsultaException ex)
             {
                 return BadRequest(ex);                
             }            
@@ -45,14 +45,29 @@ namespace Api.Controllers
         public async Task<IActionResult> GetConsultasAsync(int page, int pagesize, string orderby, string searchtext)
         {
             Pager pager = new Pager(page,pagesize,orderby,searchtext);
-            return Ok(await service.GetConsultasAsync(pager));
+            try
+            {
+                return Ok(await service.GetConsultasAsync(pager));
+            }
+            catch (ConsultaException ex)
+            {
+                return BadRequest(ex);                
+            }            
         }
+
         [Route("paciente/{id:int}")]
         [HttpGet]
         public async Task<IActionResult> GetConsultasPacienteAsync(int id, int page, int pagesize, string orderby, string searchtext)
         {
             Pager pager = new Pager(page, pagesize, orderby, searchtext);
-            return Ok(await service.GetConsultasPacienteAsync(id, pager));
+            try
+            {
+                return Ok(await service.GetConsultasPacienteAsync(id, pager));
+            }
+            catch (ConsultaException ex)
+            {
+                return BadRequest(ex);                
+            }            
         }
 
         [ClaimsAuthorize("consulta","add")]
@@ -66,8 +81,7 @@ namespace Api.Controllers
             catch (ConsultaException ex)
             {
                 return BadRequest(ex);
-            }
-            
+            }            
         }
 
         [ClaimsAuthorize("consulta", "edit")]
@@ -78,7 +92,6 @@ namespace Api.Controllers
             try
             {
                 return Ok(await service.UpdateConsultaAsync(consulta));
-
             }
             catch (ConsultaException ex)
             {
@@ -92,9 +105,8 @@ namespace Api.Controllers
         public async Task<IActionResult> DeleteConsultaAsync(int id)
         {
             try
-            {
-                await service.DeletePacienteAsync(id);
-                return Ok();
+            {                
+                return Ok(await service.DeleteConsultaAsync(id));
             }
             catch (ConsultaException ex)
             {

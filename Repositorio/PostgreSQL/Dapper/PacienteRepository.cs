@@ -33,6 +33,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 return paciente;
             }
         }
+
         public async Task<ListPacienteViewModel> GetPacientesAsync(Pager pager)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -53,6 +54,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 return new ListPacienteViewModel { count = pacientescount.First(), pacientes = pacientes };
             }
         }
+
         public async Task<ResultViewModel> NewPacienteAsync(Paciente paciente)
         {            
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -75,6 +77,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 }
             }
         }
+
         public async Task<ResultViewModel> UpdatePacienteAsync(Paciente paciente)
         {            
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -107,6 +110,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 }
             }            
         }
+
         public async Task<ResultViewModel> DeletePacienteAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -129,7 +133,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 }
                 catch (Exception ex)
                 {
-                    throw new PacienteException("Erro ao atualizar Paciente", new List<string> { ex.Message });
+                    throw new PacienteException("Erro ao eliminar Paciente", new List<string> { ex.Message });
                 }
             }
         }

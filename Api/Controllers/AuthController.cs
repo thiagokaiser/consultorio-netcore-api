@@ -32,49 +32,6 @@ namespace Api.Controllers
             this.jwtSettings = jwtSettings.Value;
         }
 
-        [HttpPost("registrar")]
-        public async Task<IActionResult> NewUser([FromBody] RegisterUserViewModel registeruser)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-
-            var user = new User
-            {
-                UserName = registeruser.Email,
-                Email = registeruser.Email,
-                EmailConfirmed = true,
-                FirstName = registeruser.firstName,
-                LastName = registeruser.lastName
-            };
-
-            var result = await userManager.CreateAsync(user, registeruser.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
-
-            await signInManager.SignInAsync(user, false);
-
-            var token = await GerarJwt(registeruser.Email);
-            return Ok(new { accessToken = token });
-
-        }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserViewModel loginUser)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-            var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
-            if (result.Succeeded)
-            {
-                var token = await GerarJwt(loginUser.Email);
-                return Ok(new { accessToken = token });
-            }
-            return BadRequest(new Exception("Usuário e senha inválidos"));
-        }
-
-        [HttpGet("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await signInManager.SignOutAsync();
-            return Ok();
-        }
-
         private async Task<string> GerarJwt(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
@@ -94,12 +51,59 @@ namespace Api.Controllers
                 Issuer = jwtSettings.Emissor,
                 Audience = jwtSettings.ValidoEm,
                 Expires = DateTime.UtcNow.AddHours(jwtSettings.ExpiracaoHoras),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), 
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
             };
 
             return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
         }
+
+        [HttpPost("registrar")]
+        public async Task<IActionResult> NewUser([FromBody] RegisterUserViewModel registeruser)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
+
+            var user = new User
+            {
+                UserName = registeruser.Email,
+                Email = registeruser.Email,
+                EmailConfirmed = true,
+                FirstName = registeruser.firstName,
+                LastName = registeruser.lastName
+            };
+
+            var result = await userManager.CreateAsync(user, registeruser.Password);
+
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            await signInManager.SignInAsync(user, false);
+
+            var token = await GerarJwt(registeruser.Email);
+            return Ok(new { accessToken = token });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserViewModel loginUser)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
+
+            var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
+
+            if (result.Succeeded)
+            {
+                var token = await GerarJwt(loginUser.Email);
+                return Ok(new { accessToken = token });
+            }
+
+            return BadRequest(new Exception("Usuário e senha inválidos"));
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return Ok();
+        }        
 
         [Authorize]
         [HttpPost("perfil")]
@@ -136,7 +140,6 @@ namespace Api.Controllers
                 user.Estado = userForm.Estado;
 
                 var userUpdated = await userManager.UpdateAsync(user);
-
                 var newToken = await GerarJwt(user.Email);
 
                 return Ok(new { accessToken = newToken });
@@ -146,6 +149,7 @@ namespace Api.Controllers
                 return BadRequest(ex);
             }            
         }
+
         [Authorize]
         [HttpPut("senha")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassViewModel userForm)
@@ -157,13 +161,13 @@ namespace Api.Controllers
             try
             {
                 var user = await userManager.FindByEmailAsync(userForm.Email);
-
                 var changePass = userManager.ChangePasswordAsync(user, userForm.OldPassword, userForm.NewPassword);
 
                 if (changePass.Result.Succeeded)
                 {
                     return Ok(changePass.Result);
                 }
+
                 return BadRequest(changePass.Result.Errors);
                 
             }

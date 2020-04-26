@@ -30,9 +30,8 @@ namespace Api.Controllers
         public async Task<IActionResult> GetPacienteAsync(int id)
         {
             try
-            {
-                var paciente = await service.GetPacienteAsync(id);
-                return Ok(paciente);
+            {                
+                return Ok(await service.GetPacienteAsync(id));
             }
             catch (PacienteException ex)
             {
@@ -45,11 +44,10 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPacientesAsync(int page, int pagesize, string orderby, string searchtext)
         {
+            Pager pager = new Pager(page, pagesize, orderby, searchtext);
             try
-            {
-                Pager pager = new Pager(page, pagesize, orderby, searchtext);
-                var pacientes = await service.GetPacientesAsync(pager);
-                return Ok(pacientes);
+            {                
+                return Ok(await service.GetPacientesAsync(pager));
             }
             catch (PacienteException ex)
             {
@@ -64,9 +62,8 @@ namespace Api.Controllers
         public async Task<IActionResult> NewPacienteAsync([FromBody] Paciente paciente)
         {
             try
-            {
-                var retorno = await service.NewPacienteAsync(paciente);
-                return Ok(retorno);
+            {                
+                return Ok(await service.NewPacienteAsync(paciente));
             }
             catch (PacienteException ex)
             {
@@ -80,9 +77,8 @@ namespace Api.Controllers
         public async Task<IActionResult> UpdatePacienteAsync([FromBody] Paciente paciente)
         {
             try
-            {
-                var retorno = await service.UpdatePacienteAsync(paciente);
-                return Ok(retorno);
+            {                
+                return Ok(await service.UpdatePacienteAsync(paciente));
             }
             catch (PacienteException ex)
             {
@@ -97,9 +93,8 @@ namespace Api.Controllers
         public async Task<IActionResult> DeletePacienteAsync(int id)
         {
             try
-            {
-                ResultViewModel retorno = await service.DeletePacienteAsync(id);
-                return Ok(retorno);
+            {                
+                return Ok(await service.DeletePacienteAsync(id));
             }
             catch(PacienteException ex)
             {

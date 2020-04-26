@@ -14,6 +14,6 @@ namespace Core.Interfaces
         Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager);
         Task<ResultViewModel> NewConsultaAsync(Consulta consulta);
         Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta);
-        Task DeleteConsultaAsync(int id);
+        Task<ResultViewModel> DeleteConsultaAsync(int id);
     }
 }

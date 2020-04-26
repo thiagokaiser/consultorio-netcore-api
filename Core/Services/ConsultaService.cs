@@ -51,6 +51,11 @@ namespace Core.Services
             }
             return await repository.UpdateConsultaAsync(consulta);
         }
+        
+        public async Task<ResultViewModel> DeleteConsultaAsync(int id)
+        {
+            return await repository.DeleteConsultaAsync(id);
+        }
 
         private List<string> ValidaCampos(Consulta consulta)
         {
@@ -66,10 +71,6 @@ namespace Core.Services
                 erros.Add("Paciente obrigatório");
             }
             return erros;
-        }
-        public async Task DeletePacienteAsync(int id)
-        {
-            await repository.DeleteConsultaAsync(id);
         }
     }
 }

@@ -32,12 +32,7 @@ namespace Core.Services
             if (string.IsNullOrEmpty(paciente.Nome))
             {
                 erros.Add("Nome invalido");                
-            }
-            /*if (string.IsNullOrEmpty(paciente.Sobrenome))
-            {
-                erros.Add("Sobrenome invalido");
-
-            }*/
+            }            
             if (erros.Any())
             {
                 throw new PacienteException("Ocorreram erros ao adicionar Paciente.", erros);

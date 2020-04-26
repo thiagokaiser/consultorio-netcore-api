@@ -61,6 +61,7 @@ namespace Repositorio.PostgreSQL.Dapper
                 return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
             }
         }
+
         public async Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -99,9 +100,9 @@ namespace Repositorio.PostgreSQL.Dapper
                                                                                       );
 
                 return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
-
             }
         }
+
         public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -127,11 +128,10 @@ namespace Repositorio.PostgreSQL.Dapper
                 catch (Exception ex)
                 {
                     throw new ConsultaException("Erro", new List<string> { ex.Message });
-                }
-                
+                }                
             }
-
         }
+
         public async Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
@@ -171,12 +171,10 @@ namespace Repositorio.PostgreSQL.Dapper
                 {                    
                     throw new ConsultaException("Erro", new List<string> { ex.Message });                
                 }
-
             }
-
         }
 
-        public async Task DeleteConsultaAsync(int id)
+        public async Task<ResultViewModel> DeleteConsultaAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
@@ -193,13 +191,17 @@ namespace Repositorio.PostgreSQL.Dapper
                 {
                     var query = "DELETE FROM Consulta Where id = @Id";
                     await conexao.ExecuteAsync(query, new { Id = id });
-
+                    return new ResultViewModel
+                    {
+                        Success = true,
+                        Message = "Consulta eliminada com sucesso.",
+                        Data = null
+                    };
                 }
                 catch (Exception ex)
                 {
                     throw new ConsultaException("Erro", new List<string> { ex.Message });
                 }
-
             }
         }
 
@@ -246,7 +248,6 @@ namespace Repositorio.PostgreSQL.Dapper
             }
 
             return erros;
-
         }        
     }
 }
