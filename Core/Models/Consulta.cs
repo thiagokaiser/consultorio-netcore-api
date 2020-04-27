@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Core.Models
-{
+{    
     public class Consulta
     {
         public int Id { get; set; }
@@ -16,8 +16,5 @@ namespace Core.Models
         public DateTime DtConsulta { get; set; }
         public string Exames { get; set; }
         public DateTime Retorno { get; set; }
-
-
-
     }
 }

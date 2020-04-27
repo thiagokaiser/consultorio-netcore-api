@@ -20,9 +20,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Logging;
 using Api.Models.Identity;
-using Repositorio.PostgreSQL.Dapper;
 using Api.Contexts;
 using Api.Security;
+using InfrastructureEF.Repositories;
+using InfrastructureEF.Contexts;
 
 namespace Api
 {
@@ -52,13 +53,12 @@ namespace Api
 
             var connectionString = Configuration.GetSection("ConnectionStrings:ConsultorioDB").Get<string>();
 
-            services.AddScoped<PacienteService>();
-            services.AddScoped<ConsultaService>();
-            services.AddScoped<IRepositoryPaciente>(x => new PacienteRepository(connectionString));
-            services.AddScoped<IRepositoryConsulta>(x => new ConsultaRepository(connectionString));
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);            
 
             services.AddDbContext<IdentityContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
+
+            services.AddDbContext<DataContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
 
             services.AddDefaultIdentity<User>()
@@ -72,7 +72,6 @@ namespace Api
 
             var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
-
 
             services.AddAuthentication(x =>
             {
@@ -92,6 +91,15 @@ namespace Api
                     ValidIssuer = jwtSettings.Emissor
                 };
             });
+
+            services.AddScoped<PacienteService>();
+            services.AddScoped<ConsultaService>();
+            // DAPPER
+            //services.AddScoped<IRepositoryPaciente>(x => new PacienteRepository(connectionString));
+            //services.AddScoped<IRepositoryConsulta>(x => new ConsultaRepository(connectionString));
+            // EF            
+            services.AddScoped<IRepositoryPaciente, PacienteRepository>();
+            services.AddScoped<IRepositoryConsulta, ConsultaRepository>();
 
         }
 

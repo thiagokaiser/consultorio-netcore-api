@@ -11,7 +11,7 @@ using Core.ViewModels;
 using System.Threading.Tasks;
 using Core.Exceptions;
 
-namespace Repositorio.PostgreSQL.Dapper
+namespace InfrastructureDapper.Repositories
 {
     public class PacienteRepository : IRepositoryPaciente
     {
