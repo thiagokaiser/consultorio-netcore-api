@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{6D362487-A72F-4977-A124-76BBC268B4EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfrastructureDapper", "Repositorio\InfrastructureDapper.csproj", "{D9AD0CF6-D907-4E5C-B5C2-795799213EC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfrastructureDapper", "InfrastructureDapper\InfrastructureDapper.csproj", "{D9AD0CF6-D907-4E5C-B5C2-795799213EC1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{EC8B62BF-5B34-41AD-AC5E-A6599FC02D86}"
 EndProject

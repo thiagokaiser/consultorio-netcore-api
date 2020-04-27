@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Logging;
 using Api.Models.Identity;
 using Api.Contexts;
 using Api.Security;
+using InfrastructureDapper.Repositories;
 using InfrastructureEF.Repositories;
 using InfrastructureEF.Contexts;
 
@@ -58,9 +59,6 @@ namespace Api
             services.AddDbContext<IdentityContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
 
-            services.AddDbContext<DataContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
-
             services.AddDefaultIdentity<User>()
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<IdentityContext>()
@@ -95,11 +93,13 @@ namespace Api
             services.AddScoped<PacienteService>();
             services.AddScoped<ConsultaService>();
             // DAPPER
-            //services.AddScoped<IRepositoryPaciente>(x => new PacienteRepository(connectionString));
-            //services.AddScoped<IRepositoryConsulta>(x => new ConsultaRepository(connectionString));
-            // EF            
-            services.AddScoped<IRepositoryPaciente, PacienteRepository>();
-            services.AddScoped<IRepositoryConsulta, ConsultaRepository>();
+            //services.AddScoped<IRepositoryPaciente>(x => new InfrastructureDapper.Repositories.PacienteRepository(connectionString));
+            //services.AddScoped<IRepositoryConsulta>(x => new InfrastructureDapper.Repositories.ConsultaRepository(connectionString));
+            // EF       
+            services.AddDbContext<DataContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
+            services.AddScoped<IRepositoryPaciente, InfrastructureEF.Repositories.PacienteRepository>();
+            services.AddScoped<IRepositoryConsulta, InfrastructureEF.Repositories.ConsultaRepository>();
 
         }
 

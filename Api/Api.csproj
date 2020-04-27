@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -23,7 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\InfrastructureEF\InfrastructureEF.csproj" />
-    <ProjectReference Include="..\Repositorio\InfrastructureDapper.csproj" />
+    <ProjectReference Include="..\InfrastructureDapper\InfrastructureDapper.csproj" />
   </ItemGroup>
 
 </Project>
