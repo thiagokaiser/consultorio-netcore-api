@@ -56,10 +56,18 @@ namespace InfrastructureEF.Repositories
 
         public async Task<ListPacienteViewModel> GetPacientesAsync(Pager pager)
         {
-            var pacientes = dataContext.Paciente.AsNoTracking().ToList();
+            var pacientes = dataContext.Paciente.Where(x =>
+                    EF.Functions.Like(x.Nome, pager.SearchText) ||
+                    EF.Functions.Like(x.Prontuario, pager.SearchText) ||
+                    EF.Functions.Like(x.Convenio, pager.SearchText)).Skip(pager.OffSet).Take(pager.PageSize).ToList();
+            var pacientescount = dataContext.Paciente.Where(x =>
+                    EF.Functions.Like(x.Nome, pager.SearchText) ||
+                    EF.Functions.Like(x.Prontuario, pager.SearchText) ||
+                    EF.Functions.Like(x.Convenio, pager.SearchText)).ToList();
+
             return new ListPacienteViewModel()
             {
-                count = 100,
+                count = pacientescount.Count(),
                 pacientes = pacientes
             };
         }

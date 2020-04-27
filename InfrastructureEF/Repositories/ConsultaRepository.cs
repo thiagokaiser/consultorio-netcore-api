@@ -55,21 +55,39 @@ namespace InfrastructureEF.Repositories
         }
 
         public async Task<ListConsultaViewModel> GetConsultasAsync(Pager pager)
-        {
-            var consultas = dataContext.Consulta.AsNoTracking().ToList();
+        {            
+            var consultas = dataContext.Consulta.Include(x => x.Paciente).Where(x =>
+                    EF.Functions.Like(x.Conduta, pager.SearchText) ||
+                    EF.Functions.Like(x.Diagnostico, pager.SearchText) ||
+                    EF.Functions.Like(x.Exames, pager.SearchText)).Skip(pager.OffSet).Take(pager.PageSize).ToList();
+            var consultascount = dataContext.Consulta.Where(x =>
+                    EF.Functions.Like(x.Conduta, pager.SearchText) ||
+                    EF.Functions.Like(x.Diagnostico, pager.SearchText) ||
+                    EF.Functions.Like(x.Exames, pager.SearchText)).ToList();
+            
             return new ListConsultaViewModel()
             {
-                count = 100,
+                count = consultascount.Count(),
                 consultas = consultas
             };
         }
 
         public async Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager)
         {
-            var consultas = dataContext.Consulta.AsNoTracking().ToList();
+            var consultas = dataContext.Consulta.Include(x => x.Paciente).Where(x =>
+                    x.PacienteId == id && (
+                    EF.Functions.Like(x.Conduta, pager.SearchText) ||
+                    EF.Functions.Like(x.Diagnostico, pager.SearchText) ||
+                    EF.Functions.Like(x.Exames, pager.SearchText))).Skip(pager.OffSet).Take(pager.PageSize).ToList();
+            var consultascount = dataContext.Consulta.Where(x => 
+                    x.PacienteId == id && (
+                    EF.Functions.Like(x.Conduta, pager.SearchText) ||
+                    EF.Functions.Like(x.Diagnostico, pager.SearchText) ||
+                    EF.Functions.Like(x.Exames, pager.SearchText))).ToList();
+
             return new ListConsultaViewModel()
             {
-                count = 100,
+                count = consultascount.Count(),
                 consultas = consultas
             };            
         }
@@ -106,7 +124,6 @@ namespace InfrastructureEF.Repositories
                     Message = "Consulta alterada com sucesso.",
                     Data = consulta
                 };
-
             }
             catch (Exception ex)
             {
