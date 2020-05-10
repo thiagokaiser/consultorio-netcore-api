@@ -10,18 +10,22 @@ namespace Core.Services
     public class ConsultaService
     {
         private IRepositoryConsulta repository;
+
         public ConsultaService(IRepositoryConsulta repository)
         {
             this.repository = repository;
         }
+
         public async Task<Consulta> GetConsultaAsync(int id)
         {
             return await repository.GetConsultaAsync(id);
         }
+
         public async Task<ListConsultaViewModel> GetConsultasAsync(Pager pager)
         {
             return await repository.GetConsultasAsync(pager);
         }
+
         public async Task<ListConsultaViewModel> GetConsultasPacienteAsync(int id, Pager pager)
         {
             return await repository.GetConsultasPacienteAsync(id, pager);
@@ -36,9 +40,9 @@ namespace Core.Services
                 throw new ConsultaException("Erro", erros);
             }
             
-            return await repository.NewConsultaAsync(consulta);        
-            
+            return await repository.NewConsultaAsync(consulta);                    
         }
+
         public async Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta)
         {
             List<string> erros = ValidaCampos(consulta);

@@ -13,6 +13,7 @@ using Core.Security;
 using Core.Services;
 using Core.Interfaces;
 using InfrastructureEF.Contexts;
+using InfrastructureEF.Repositories;
 
 namespace Api
 {
@@ -42,10 +43,24 @@ namespace Api
 
             var connectionString = Configuration.GetSection("ConnectionStrings:ConsultorioDB").Get<string>();
 
-            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);            
-
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            
             services.AddDbContext<IdentityContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
+            services.AddDbContext<DataContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
+
+            services.AddScoped<AuthService>();
+            services.AddScoped<PacienteService>();
+            services.AddScoped<ConsultaService>();
+            services.AddScoped<IRepositoryAuth, AuthRepository>();
+
+            // DAPPER
+            //services.AddScoped<IRepositoryPaciente>(x => new InfrastructureDapper.Repositories.PacienteRepository(connectionString));
+            //services.AddScoped<IRepositoryConsulta>(x => new InfrastructureDapper.Repositories.ConsultaRepository(connectionString));
+            // EF            
+            services.AddScoped<IRepositoryPaciente, InfrastructureEF.Repositories.PacienteRepository>();
+            services.AddScoped<IRepositoryConsulta, InfrastructureEF.Repositories.ConsultaRepository>();
 
             services.AddDefaultIdentity<User>()
                     .AddRoles<IdentityRole>()
@@ -77,19 +92,6 @@ namespace Api
                     ValidIssuer = jwtSettings.Emissor
                 };
             });
-
-            services.AddScoped<AuthService>();
-            services.AddScoped<PacienteService>();
-            services.AddScoped<ConsultaService>();
-            // DAPPER
-            //services.AddScoped<IRepositoryPaciente>(x => new InfrastructureDapper.Repositories.PacienteRepository(connectionString));
-            //services.AddScoped<IRepositoryConsulta>(x => new InfrastructureDapper.Repositories.ConsultaRepository(connectionString));
-            // EF       
-            services.AddDbContext<DataContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("ConsultorioDB")));
-            services.AddScoped<IRepositoryPaciente, InfrastructureEF.Repositories.PacienteRepository>();
-            services.AddScoped<IRepositoryConsulta, InfrastructureEF.Repositories.ConsultaRepository>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
