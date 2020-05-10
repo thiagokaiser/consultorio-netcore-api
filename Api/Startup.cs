@@ -1,29 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Core.Services;
-using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Logging;
-using Api.Models.Identity;
-using Api.Contexts;
-using Api.Security;
-using InfrastructureDapper.Repositories;
-using InfrastructureEF.Repositories;
+using Core.Models.Identity;
+using Core.Security;
+using Core.Services;
+using Core.Interfaces;
 using InfrastructureEF.Contexts;
 
 namespace Api
@@ -90,6 +78,7 @@ namespace Api
                 };
             });
 
+            services.AddScoped<AuthService>();
             services.AddScoped<PacienteService>();
             services.AddScoped<ConsultaService>();
             // DAPPER

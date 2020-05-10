@@ -1,14 +1,12 @@
-using System.Collections.Generic;
-using Npgsql;
-using Dapper.Contrib.Extensions;
-using Core.Models;
-using Core.Services;
-using Core.Interfaces;
-using Dapper;
 using System;
 using System.Linq;
-using Core.ViewModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Npgsql;
+using Dapper;
+using Core.Models;
+using Core.Interfaces;
+using Core.ViewModels;
 using Core.Exceptions;
 
 namespace InfrastructureDapper.Repositories

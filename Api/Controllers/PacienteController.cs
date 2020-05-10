@@ -1,13 +1,11 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Core.Services;
 using Core.ViewModels;
 using Core.Models;
 using Core.Exceptions;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using Api.Security;
+using Core.Security;
 
 namespace Api.Controllers
 {

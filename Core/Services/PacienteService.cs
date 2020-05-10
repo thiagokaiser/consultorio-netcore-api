@@ -1,11 +1,10 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using Core.ViewModels;
 using Core.Interfaces;
 using Core.Models;
-using System.Threading.Tasks;
-using System.Linq;
 using Core.Exceptions;
-using System;
 
 namespace Core.Services
 {

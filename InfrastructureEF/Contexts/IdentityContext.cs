@@ -1,11 +1,8 @@
-﻿using Api.Models.Identity;
+﻿using Core.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Api.Contexts
+namespace InfrastructureEF.Contexts
 {
     public class IdentityContext : IdentityDbContext<User>
     {

@@ -2,9 +2,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Core.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Services
