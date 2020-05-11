@@ -30,15 +30,10 @@ namespace Core.Services
         }
 
         public async Task<ResultViewModel> NewPacienteAsync(Paciente paciente)
-        {
-            var erros = new List<string>();
+        {            
             if (string.IsNullOrEmpty(paciente.Nome))
             {
-                erros.Add("Nome invalido");                
-            }            
-            if (erros.Any())
-            {
-                throw new PacienteException("Ocorreram erros ao adicionar Paciente.", erros);
+                throw new PacienteException("Nome inválido");
             }
 
             return await repository.NewPacienteAsync(paciente);

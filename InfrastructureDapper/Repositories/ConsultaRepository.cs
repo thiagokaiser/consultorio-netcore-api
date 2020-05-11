@@ -41,23 +41,30 @@ namespace InfrastructureDapper.Repositories
                                  OR exames LIKE @SearchText                                 
                                  OR paciente.nome LIKE @SearchText";
 
-                string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";
-                var consultascount = await conexao.QueryAsync<int>(queryCount, pager);
+                try
+                {
+                    string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid {where}";
+                    var consultascount = await conexao.QueryAsync<int>(queryCount, pager);
 
-                string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +                             
-                             $"{where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
+                    string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +                             
+                                 $"{where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
 
-                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
-                                                                                       (consulta, paciente) =>
-                                                                                       {
-                                                                                           consulta.Paciente = paciente;
-                                                                                           return consulta;
-                                                                                       },                                                                                       
-                                                                                       splitOn:"id",
-                                                                                       param: pager                                                                                       
-                                                                                      );
+                    var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
+                                                                                           (consulta, paciente) =>
+                                                                                           {
+                                                                                               consulta.Paciente = paciente;
+                                                                                               return consulta;
+                                                                                           },                                                                                       
+                                                                                           splitOn:"id",
+                                                                                           param: pager                                                                                       
+                                                                                          );
                 
-                return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
+                    return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
+                }
+                catch (Exception ex)
+                {
+                    throw new ConsultaException(ex.Message);
+                }
             }
         }
 
@@ -81,24 +88,31 @@ namespace InfrastructureDapper.Repositories
                                  OR exames LIKE @SearchText                                 
                                  OR paciente.nome LIKE @SearchText";
 
-                string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
-                                    $"WHERE consulta.pacienteid = @Id AND({where})";
-                var consultascount = await conexao.QueryAsync<int>(queryCount, queryParams);
+                try
+                {                
+                    string queryCount = $"Select COUNT(*) from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
+                                        $"WHERE consulta.pacienteid = @Id AND({where})";
+                    var consultascount = await conexao.QueryAsync<int>(queryCount, queryParams);
 
-                string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
-                               $"WHERE consulta.pacienteid = @Id AND({where}) ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
+                    string query = $"Select * from consulta INNER JOIN paciente on paciente.id = consulta.pacienteid " +
+                                   $"WHERE consulta.pacienteid = @Id AND({where}) ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
 
-                var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
-                                                                                       (consulta, paciente) =>
-                                                                                       {
-                                                                                           consulta.Paciente = paciente;
-                                                                                           return consulta;
-                                                                                       },
-                                                                                       splitOn: "id",
-                                                                                       param: queryParams
-                                                                                      );
+                    var consultas = await conexao.QueryAsync<Consulta, Paciente, Consulta>(query,
+                                                                                           (consulta, paciente) =>
+                                                                                           {
+                                                                                               consulta.Paciente = paciente;
+                                                                                               return consulta;
+                                                                                           },
+                                                                                           splitOn: "id",
+                                                                                           param: queryParams
+                                                                                          );
 
-                return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
+                    return new ListConsultaViewModel { count = consultascount.First(), consultas = consultas };
+                }
+                catch (Exception ex)
+                {
+                    throw new ConsultaException(ex.Message);
+                }
             }
         }
 
@@ -106,12 +120,8 @@ namespace InfrastructureDapper.Repositories
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<string> erros = await ValidaConsultaAsync(conexao, consulta);                
-
-                if (erros.Count > 0)
-                {
-                    throw new ConsultaException(erros);
-                }
+                await ValidaConsultaAsync(conexao, consulta);
+                
                 try
                 {
                     var query = @"Insert into Consulta(pacienteid, conduta, diagnostico, cid, dtconsulta, exames, retorno) 
@@ -135,17 +145,11 @@ namespace InfrastructureDapper.Repositories
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                List<string> erros = await ValidaConsultaAsync(conexao, consulta);
-                
+                await ValidaConsultaAsync(conexao, consulta);
+
                 var validConsulta = await conexao.QueryFirstOrDefaultAsync<Consulta>("Select id from Consulta where id = @id", new { id = consulta.Id });
-                if (validConsulta == null)
-                {
-                    erros.Add("Consulta não cadastrada no sistema");
-                }
-                if (erros.Count > 0)
-                {
-                    throw new ConsultaException("Erro", erros);
-                }
+                if (validConsulta == null) throw new ConsultaException("Consulta não cadastrada no sistema");
+
                 try
                 {
                     var query = @"Update Consulta SET
@@ -176,20 +180,17 @@ namespace InfrastructureDapper.Repositories
         public async Task<ResultViewModel> DeleteConsultaAsync(int id)
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
-            {
-                List<string> erros = new List<string>();
+            {                
                 if (this.GetConsultaAsync(id) == null)
                 {
-                    erros.Add("Consulta não existe");
+                    throw new ConsultaException("Consulta não existe");                    
                 }
-                if (erros.Count > 0)
-                {
-                    throw new ConsultaException("erro ao deletar", erros);
-                }
+                
                 try
                 {
                     var query = "DELETE FROM Consulta Where id = @Id";
                     await conexao.ExecuteAsync(query, new { Id = id });
+
                     return new ResultViewModel
                     {
                         Success = true,
@@ -236,17 +237,19 @@ namespace InfrastructureDapper.Repositories
             return safeOrderBy;
         }
 
-        private async Task<List<string>> ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
+        private async Task ValidaConsultaAsync(NpgsqlConnection conexao, Consulta consulta)
         {
             List<string> erros = new List<string> { };
 
-            var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
-            if (paciente == null)
-            {
-                erros.Add("Paciente não cadastrado no sistema");
-            }
+            if (consulta.Conduta == "exemplo") erros.Add("Conduta inválida");
 
-            return erros;
+            var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>("Select * from Paciente where id = @id", new { id = consulta.PacienteId });
+            if (paciente == null) erros.Add("Paciente não cadastrado no sistema");            
+
+            if (erros.Count > 0)
+            {
+                throw new ConsultaException(erros);
+            }
         }        
     }
 }

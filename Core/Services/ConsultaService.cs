@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Core.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,24 +34,13 @@ namespace Core.Services
 
         public async Task<ResultViewModel> NewConsultaAsync(Consulta consulta)
         {
-            List<string> erros = ValidaCampos(consulta);
-
-            if (erros.Count > 0)
-            {
-                throw new ConsultaException("Erro", erros);
-            }
-            
+            ValidaCampos(consulta);            
             return await repository.NewConsultaAsync(consulta);                    
         }
 
         public async Task<ResultViewModel> UpdateConsultaAsync(Consulta consulta)
         {
-            List<string> erros = ValidaCampos(consulta);
-            
-            if (erros.Count > 0)
-            {
-                throw new ConsultaException("Erro", erros);
-            }
+            ValidaCampos(consulta);            
             return await repository.UpdateConsultaAsync(consulta);
         }
         
@@ -59,20 +49,14 @@ namespace Core.Services
             return await repository.DeleteConsultaAsync(id);
         }
 
-        private List<string> ValidaCampos(Consulta consulta)
+        private void ValidaCampos(Consulta consulta)
         {
             List<string> erros = new List<string>();
 
-            if (consulta.Cid == "")
-            {
-                erros.Add("Cid obrigatório");
+            if (consulta.Cid == "") erros.Add("Cid obrigatório");            
+            if (consulta.PacienteId == 0) erros.Add("Paciente obrigatório");            
 
-            }
-            if (consulta.PacienteId == 0)
-            {
-                erros.Add("Paciente obrigatório");
-            }
-            return erros;
+            throw new ConsultaException(erros);            
         }
     }
 }

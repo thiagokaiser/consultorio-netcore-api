@@ -24,11 +24,18 @@ namespace InfrastructureDapper.Repositories
         {
             using (NpgsqlConnection conexao = new NpgsqlConnection(connectionString))
             {
-                var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>(@"
-                    Select * from Paciente Where Id = @Id",
-                    new { Id = id }
-                    );
-                return paciente;
+                try
+                {
+                    var paciente = await conexao.QueryFirstOrDefaultAsync<Paciente>(@"
+                        Select * from Paciente Where Id = @Id",
+                        new { Id = id }
+                        );
+                    return paciente;
+                }
+                catch (Exception ex)
+                {
+                    throw new PacienteException(ex.Message);
+                }
             }
         }
 
@@ -42,14 +49,21 @@ namespace InfrastructureDapper.Repositories
                                     OR prontuario LIKE @SearchText
                                     OR convenio LIKE @SearchText";
 
-                string queryCount = $"Select COUNT(*) from Paciente {where}";
-                var pacientescount = await conexao.QueryAsync<int>(queryCount, pager);
+                try
+                {
+                    string queryCount = $"Select COUNT(*) from Paciente {where}";
+                    var pacientescount = await conexao.QueryAsync<int>(queryCount, pager);
 
-                string query = $"Select * from Paciente {where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
-                var pacientes = await conexao.QueryAsync<Paciente>(query, pager);
+                    string query = $"Select * from Paciente {where} ORDER BY {safeOrderBy} Limit @PageSize OffSet @OffSet";
+                    var pacientes = await conexao.QueryAsync<Paciente>(query, pager);
 
                 
-                return new ListPacienteViewModel { count = pacientescount.First(), pacientes = pacientes };
+                    return new ListPacienteViewModel { count = pacientescount.First(), pacientes = pacientes };
+                }
+                catch (Exception ex)
+                {
+                    throw new PacienteException(ex.Message);
+                }
             }
         }
 
@@ -69,9 +83,8 @@ namespace InfrastructureDapper.Repositories
                     };
                 }
                 catch (Exception ex)
-                {
-                    var erros = new List<string> { ex.Message };
-                    throw new PacienteException("Erro", erros);
+                {                    
+                    throw new PacienteException(ex.Message);
                 }
             }
         }
@@ -82,7 +95,7 @@ namespace InfrastructureDapper.Repositories
             {                
                 if (await this.GetPacienteAsync(paciente.Id) == null)
                 {
-                    throw new PacienteException("Erro ao atualizar Paciente", new List<string> { "Paciente não existe" });
+                    throw new PacienteException("Paciente não existe");
                 }
                 try
                 {
@@ -104,7 +117,7 @@ namespace InfrastructureDapper.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new PacienteException("Erro ao atualizar Paciente", new List<string> { ex.Message });
+                    throw new PacienteException(ex.Message);
                 }
             }            
         }
@@ -116,7 +129,7 @@ namespace InfrastructureDapper.Repositories
                 var paciente = await this.GetPacienteAsync(id);
                 if (paciente == null)
                 {
-                    throw new PacienteException("Erro ao deletar Paciente", new List<string> { "Paciente não existe" });
+                    throw new PacienteException("Paciente não existe");
                 }
                 try
                 {
@@ -131,7 +144,7 @@ namespace InfrastructureDapper.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new PacienteException("Erro ao eliminar Paciente", new List<string> { ex.Message });
+                    throw new PacienteException(ex.Message);
                 }
             }
         }

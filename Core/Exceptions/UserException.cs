@@ -27,7 +27,7 @@ namespace Core.Exceptions
 
         public UserException(string message) : base(message)
         {
-            
+            this.erros.Add(message);
         }
     }
 }

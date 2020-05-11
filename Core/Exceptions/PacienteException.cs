@@ -6,7 +6,6 @@ namespace Core.Exceptions
 {
     public class PacienteException : Exception
     {
-
         public List<string> erros = new List<string> { };
 
         public PacienteException(string message, List<string> erros) : base(message)
@@ -21,7 +20,7 @@ namespace Core.Exceptions
 
         public PacienteException(string message) : base(message)
         {
-            
+            this.erros.Add(message);
         }
 
     }
