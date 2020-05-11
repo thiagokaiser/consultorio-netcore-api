@@ -110,7 +110,7 @@ namespace InfrastructureDapper.Repositories
 
                 if (erros.Count > 0)
                 {
-                    throw new ConsultaException("Erro", erros);
+                    throw new ConsultaException(erros);
                 }
                 try
                 {
@@ -126,7 +126,7 @@ namespace InfrastructureDapper.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new ConsultaException("Erro", new List<string> { ex.Message });
+                    throw new ConsultaException(ex.Message);
                 }                
             }
         }
@@ -168,7 +168,7 @@ namespace InfrastructureDapper.Repositories
                 }
                 catch (Exception ex)
                 {                    
-                    throw new ConsultaException("Erro", new List<string> { ex.Message });                
+                    throw new ConsultaException(ex.Message);                
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace InfrastructureDapper.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new ConsultaException("Erro", new List<string> { ex.Message });
+                    throw new ConsultaException(ex.Message);
                 }
             }
         }

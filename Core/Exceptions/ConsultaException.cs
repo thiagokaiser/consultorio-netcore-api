@@ -14,5 +14,15 @@ namespace Core.Exceptions
             this.erros = erros;
         }
 
+        public ConsultaException(List<string> erros) : base("Ocorreram erros")
+        {
+            this.erros = erros;
+        }
+
+        public ConsultaException(string message) : base(message)
+        {
+            
+        }
+
     }
 }

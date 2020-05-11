@@ -27,6 +27,7 @@ namespace InfrastructureEF.Repositories
                 var consulta = await dataContext.Consulta.SingleAsync(p => p.Id == id);
                 dataContext.Remove(consulta);
                 await dataContext.SaveChangesAsync();
+                
                 return new ResultViewModel
                 {
                     Success = true,
@@ -36,7 +37,7 @@ namespace InfrastructureEF.Repositories
             }
             catch (Exception ex)
             {
-                throw new ConsultaException("Erro", new List<string> { ex.Message });
+                throw new ConsultaException(ex.Message);
             }            
         }
 
@@ -49,7 +50,7 @@ namespace InfrastructureEF.Repositories
             }
             catch (Exception ex)
             {
-                throw new ConsultaException("Erro", new List<string> { ex.Message });                
+                throw new ConsultaException(ex.Message);                
             }            
         }
 
@@ -107,7 +108,7 @@ namespace InfrastructureEF.Repositories
             }
             catch (Exception ex)
             {
-                throw new ConsultaException("Erro", new List<string> { ex.Message });                
+                throw new ConsultaException(ex.Message);                
             }            
         }
 
@@ -126,7 +127,7 @@ namespace InfrastructureEF.Repositories
             }
             catch (Exception ex)
             {
-                throw new ConsultaException("Erro", new List<string> { ex.Message });
+                throw new ConsultaException(ex.Message);
             }
         }
     }

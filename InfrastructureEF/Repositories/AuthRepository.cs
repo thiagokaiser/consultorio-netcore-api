@@ -10,6 +10,7 @@ using Core.Models.Identity;
 using Core.Security;
 using Core.ViewModels;
 using Core.Interfaces;
+using Core.Exceptions;
 
 namespace InfrastructureEF.Repositories
 {
@@ -67,8 +68,8 @@ namespace InfrastructureEF.Repositories
 
             var result = await userManager.CreateAsync(user, registeruser.Password);
 
-            if (!result.Succeeded) throw new Exception();
-            //result.Errors;
+            if (!result.Succeeded) throw new UserException(result.Errors);
+            
             await signInManager.SignInAsync(user, false);
 
             return await GerarJwt(registeruser.Email);
@@ -82,7 +83,7 @@ namespace InfrastructureEF.Repositories
             {
                 return await GerarJwt(loginUser.Email);
             }
-            throw new Exception("Usuário e senha inválidos");
+            throw new UserException("Usuário e senha inválidos");
         }
 
         public async Task Logout()
@@ -91,70 +92,47 @@ namespace InfrastructureEF.Repositories
         }
 
         public async Task<User> LoadUserByEmail(UserViewModel user)
-        {
-            try
-            {
-                return await userManager.FindByEmailAsync(user.Email);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        {            
+            return await userManager.FindByEmailAsync(user.Email);        
         }
 
         public async Task<string> UpdateUser(UserViewModel userForm)
         {
             var result = await signInManager.PasswordSignInAsync(userForm.Email, userForm.Password, false, true);
             if (!result.Succeeded)
-            {
-                throw new Exception("Senha inválida");
+            {                
+                throw new UserException("Senha inválida");
             }
-            try
-            {
-                var user = await userManager.FindByEmailAsync(userForm.Email);
+            
+            var user = await userManager.FindByEmailAsync(userForm.Email);
 
-                user.FirstName = userForm.FirstName;
-                user.LastName = userForm.LastName;
-                user.DtNascimento = userForm.DtNascimento;
-                user.Descricao = userForm.Descricao;
-                user.Cidade = userForm.Cidade;
-                user.Estado = userForm.Estado;
+            user.FirstName = userForm.FirstName;
+            user.LastName = userForm.LastName;
+            user.DtNascimento = userForm.DtNascimento;
+            user.Descricao = userForm.Descricao;
+            user.Cidade = userForm.Cidade;
+            user.Estado = userForm.Estado;
 
-                var userUpdated = await userManager.UpdateAsync(user);
-                var newToken = await GerarJwt(user.Email);
+            var userUpdated = await userManager.UpdateAsync(user);
+            var newToken = await GerarJwt(user.Email);
 
-                return newToken;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return newToken;            
         }
 
         public async Task ChangePassword(ChangePassViewModel userForm)
         {
             if (userForm.NewPassword != userForm.ConfirmNewPassword)
             {
-                throw new Exception("Senhas não conferem");
+                throw new UserException("Senhas não conferem");
             }
-            try
-            {
-                var user = await userManager.FindByEmailAsync(userForm.Email);
-                var changePass = userManager.ChangePasswordAsync(user, userForm.OldPassword, userForm.NewPassword);
+            
+            var user = await userManager.FindByEmailAsync(userForm.Email);                
+            var changePass = userManager.ChangePasswordAsync(user, userForm.OldPassword, userForm.NewPassword);
 
-                if (!changePass.Result.Succeeded)
-                {
-                    throw new Exception();
-                    //return Ok(changePass.Result);
-                }
-
-                //return BadRequest(changePass.Result.Errors);
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            if (!changePass.Result.Succeeded)
+            {                    
+                throw new UserException(changePass.Result.Errors);                    
+            }            
         }
     }
 }

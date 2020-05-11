@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using Core.Exceptions;
+using Core.Services;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace Api.Controllers
             {
                 return Ok(new { accessToken = await service.NewUser(registeruser)});
             }
-            catch (Exception ex)
+            catch (UserException ex)
             {
                 return BadRequest(ex);
             }
@@ -40,7 +41,7 @@ namespace Api.Controllers
             {
                 return Ok(new { accessToken = await service.Login(loginUser)});
             }
-            catch (Exception ex)
+            catch (UserException ex)
             {
                 return BadRequest(ex);
             }            
@@ -61,7 +62,7 @@ namespace Api.Controllers
             {                
                 return Ok(await service.LoadUserByEmail(user));
             }
-            catch(Exception ex)
+            catch(UserException ex)
             {
                 return BadRequest(ex);
             }            
@@ -75,7 +76,7 @@ namespace Api.Controllers
             {
                 return Ok(new { accessToken = await service.UpdateUser(userForm)});
             }
-            catch (Exception ex)
+            catch (UserException ex)
             {
                 return BadRequest(ex);                
             }            
@@ -90,7 +91,7 @@ namespace Api.Controllers
                 await service.ChangePassword(userForm);
                 return Ok();
             }
-            catch (Exception ex)
+            catch (UserException ex)
             {
                 return BadRequest(ex);
             }
