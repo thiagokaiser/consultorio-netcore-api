@@ -53,10 +53,14 @@ namespace Core.Services
         {
             List<string> erros = new List<string>();
 
-            if (consulta.Cid == "") erros.Add("Cid obrigatório");            
-            if (consulta.PacienteId == 0) erros.Add("Paciente obrigatório");            
+            if (consulta.Cid == "") erros.Add("Cid obrigatório");
+            if (consulta.Conduta == "Exemplo") erros.Add("Conduta inválida");
+            if (consulta.PacienteId == 0) erros.Add("Paciente obrigatório");
 
-            throw new ConsultaException(erros);            
+            if (erros.Count > 0)
+            {
+                throw new ConsultaException(erros);
+            }            
         }
     }
 }

@@ -45,7 +45,7 @@ namespace InfrastructureEF.Repositories
         {
             try
             {
-                var consulta = await dataContext.Consulta.SingleAsync(p => p.Id == id);
+                var consulta = await dataContext.Consulta.SingleAsync(p => p.Id == id);                
                 return consulta;
             }
             catch (Exception ex)
